@@ -1,6 +1,6 @@
 FROM python:3-alpine
 
-LABEL maintainer="xnetcat (Jakub)"
+LABEL maintainer="Billuc (Luc Billaud)"
 
 # Install dependencies
 RUN apk add --no-cache \
@@ -33,4 +33,4 @@ VOLUME /music
 WORKDIR /music
 
 # Entrypoint command
-ENTRYPOINT ["poetry", "run", "spotdl"]
+ENTRYPOINT ["poetry", "run", "music-dl"]

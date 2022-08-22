@@ -1,7 +1,5 @@
 # TODO
 
-- Change maintainer (Dockerfile, pyproject.toml)
-- Change command name (Dockerfile, pyproject.toml)
 - Redo architecture (classes, utils, exec) for Spotify
 - Append Youtube & YoutubeMusic support (playlists)
 - Look at the web part and modify
