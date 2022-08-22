@@ -7,9 +7,9 @@ import json
 from typing import List, Optional
 from pathlib import Path
 
-from spotdl.download.downloader import Downloader
-from spotdl.utils.m3u import create_m3u_file
-from spotdl.utils.search import get_simple_songs
+from musicdl.downloader.downloader import Downloader
+from musicdl.utils.m3u import create_m3u_file
+from musicdl.utils.search import get_simple_songs
 
 
 def download(

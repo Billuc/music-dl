@@ -24,13 +24,13 @@ from starlette.types import Scope
 
 import nest_asyncio
 
-from spotdl.download.downloader import Downloader, DownloaderError
-from spotdl.download.progress_handler import NAME_TO_LEVEL, ProgressHandler, SongTracker
-from spotdl.types.song import Song
-from spotdl.utils.github import download_github_dir
-from spotdl.utils.search import parse_query
-from spotdl.utils.search import get_search_results
-from spotdl.utils.config import get_spotdl_path
+from musicdl.downloader.downloader import Downloader, DownloaderError
+from musicdl.downloader.progress_handler import NAME_TO_LEVEL, ProgressHandler, SongTracker
+from musicdl.types.song import Song
+from musicdl.utils.github import download_github_dir
+from musicdl.utils.search import parse_query
+from musicdl.utils.search import get_search_results
+from musicdl.utils.config import get_musicdl_path
 
 
 ALLOWED_ORIGINS = [
@@ -200,7 +200,7 @@ def fix_mime_types():
     mappings from file extension to MIME type from the Windows
     registry. Other applications can and do write incorrect values
     to this registry, which causes `mimetypes.guess_type` to return
-    incorrect values, which causes spotDL to fail to render on
+    incorrect values, which causes musicdl to fail to render on
     the frontend.
     This method hard-codes the correct mappings for certain MIME
     types that are known to be either used by TensorBoard or
@@ -208,9 +208,9 @@ def fix_mime_types():
     """
     # Known to be problematic when Visual Studio is installed:
     # <https://github.com/tensorflow/tensorboard/issues/3120>
-    # https://github.com/spotDL/spotify-downloader/issues/1540
+    # https://github.com/musicdl/spotify-downloader/issues/1540
     mimetypes.add_type("application/javascript", ".js")
-    # Not known to be problematic, but used by spotDL:
+    # Not known to be problematic, but used by musicdl:
     mimetypes.add_type("text/css", ".css")
     mimetypes.add_type("image/svg+xml", ".svg")
     mimetypes.add_type("text/html", ".html")
@@ -382,7 +382,7 @@ async def download_url(url: str, client_id: str) -> Optional[str]:
     """
 
     app.downloader.output = str(
-        (get_spotdl_path() / f"web/sessions/{client_id}").absolute()
+        (get_musicdl_path() / f"web/sessions/{client_id}").absolute()
     )
 
     # Initiate realtime updates if websocket from client is connected
@@ -432,7 +432,7 @@ async def download_file(file: str, client_id: str) -> FileResponse:
     """
 
     return FileResponse(
-        str((get_spotdl_path() / f"web/sessions/{client_id}/{file}").absolute()),
+        str((get_musicdl_path() / f"web/sessions/{client_id}/{file}").absolute()),
         filename=file,
     )
 
@@ -559,13 +559,13 @@ def web(settings: Dict[str, Any]):
 
     fix_mime_types()
 
-    web_app_dir = str(get_spotdl_path().absolute())
+    web_app_dir = str(get_musicdl_path().absolute())
 
     print("Updating web app")
 
     # Get web client from CDN (github for now)
     download_github_dir(
-        "https://github.com/spotdl/web-ui/tree/master/dist", output_dir=web_app_dir
+        "https://github.com/musicdl/web-ui/tree/master/dist", output_dir=web_app_dir
     )
 
     # Serve web client SPA

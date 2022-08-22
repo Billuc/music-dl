@@ -8,9 +8,9 @@ import concurrent.futures
 from typing import List, Optional
 from pathlib import Path
 
-from spotdl.download.downloader import Downloader
-from spotdl.utils.search import parse_query
-from spotdl.utils.m3u import create_m3u_file
+from musicdl.downloader.downloader import Downloader
+from musicdl.utils.search import parse_query
+from musicdl.utils.m3u import create_m3u_file
 
 
 def save(

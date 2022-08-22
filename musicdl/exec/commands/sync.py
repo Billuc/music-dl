@@ -7,11 +7,11 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
-from spotdl.download.downloader import Downloader
-from spotdl.utils.search import parse_query
-from spotdl.utils.formatter import create_file_name
-from spotdl.utils.m3u import create_m3u_file
-from spotdl.types.song import Song
+from musicdl.downloader.downloader import Downloader
+from musicdl.utils.search import parse_query
+from musicdl.utils.formatter import create_file_name
+from musicdl.utils.m3u import create_m3u_file
+from musicdl.types.song import Song
 
 
 def sync(
@@ -39,11 +39,11 @@ def sync(
     # Query and save file
     # Create initial sync file
     if query and save_path:
-        if any(req for req in query if req.endswith(".spotdl")):
-            # If the query contains a .spotdl file, and we are about to create
-            # .spotdl file, raise an error.
+        if any(req for req in query if req.endswith(".musicdl")):
+            # If the query contains a .musicdl file, and we are about to create
+            # .musicdl file, raise an error.
             raise ValueError(
-                "Cannot create a sync file with a .spotdl file in the query."
+                "Cannot create a sync file with a .musicdl file in the query."
             )
 
         # Parse the query
@@ -73,7 +73,7 @@ def sync(
         return None
 
     # If the query is a single file, download it
-    if len(query) == 1 and query[0].endswith(".spotdl") and not save_path:
+    if len(query) == 1 and query[0].endswith(".musicdl") and not save_path:
         # Load the sync file
         with open(query[0], "r", encoding="utf-8") as sync_file:
             sync_data = json.load(sync_file)
