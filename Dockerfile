@@ -33,4 +33,4 @@ VOLUME /music
 WORKDIR /music
 
 # Entrypoint command
-ENTRYPOINT ["poetry", "run", "music-dl"]
+ENTRYPOINT ["poetry", "run", "musicdl"]

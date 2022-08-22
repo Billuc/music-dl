@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "spotdl"
-version = "4.0.0-rc.2"
-description = "Download your Spotify playlists and songs along with album art and metadata"
+name = "musicdl"
+version = "0.0.1"
+description = "Download your playlists and songs along with album art and metadata"
 license = "MIT"
 authors = ["spotDL Team <spotdladmins@googlegroups.com>", "Billuc <billuc@hotmail.fr>"]
 maintainers = ["Billuc <billuc@hotmail.fr>"]
@@ -9,7 +9,7 @@ readme = "README.md"
 repository = "https://github.com/Billuc/music-dl.git"
 homepage = "https://github.com/Billuc/music-dl"
 documentation = "https://spotdl.rtfd.io/en/latest/"
-keywords = ["music-dl", "downloader", "music"]
+keywords = ["musicdl", "downloader", "music"]
 classifiers = [
     "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: MIT License",
@@ -72,7 +72,7 @@ mkdocs-literate-nav = "^0.4.1"
 mkdocs-section-index = "^0.3.4"
 
 [tool.poetry.scripts]
-music-dl = "music-dl:console_entry_point"
+musicdl = "musicdl:console_entry_point"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
