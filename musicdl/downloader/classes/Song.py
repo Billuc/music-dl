@@ -1,19 +1,9 @@
-"""
-Song module that hold the Song and SongList classes.
-"""
-
 import json
 
 from dataclasses import dataclass, asdict
 from typing import Dict, Any, List, Optional
 
-from musicdl.downloader.data.songlist import SongList
-
-
-class SongError(Exception):
-    """
-    Base class for all exceptions related to songs.
-    """
+from .SongList import SongList
 
 
 @dataclass()

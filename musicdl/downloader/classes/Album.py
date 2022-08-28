@@ -1,24 +1,15 @@
-"""
-Artist module for retrieving artist data from Spotify.
-"""
-
 from dataclasses import dataclass
 from typing import Any, Dict, List
-from spotdl.types.song import SongList
+
+from .SongList import SongList
+from .Song import Song
 from spotdl.utils.spotify import SpotifyClient
-from spotdl.types.song import Song
-
-
-class AlbumError(Exception):
-    """
-    Base class for all exceptions related to albums.
-    """
 
 
 @dataclass(frozen=True)
 class Album(SongList):
     """
-    Album class for retrieving album data from Spotify.
+    Album class for stroing album data.
     """
 
     artist: Dict[str, Any]

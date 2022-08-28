@@ -1,6 +1,8 @@
 import abc
 from typing import Optional
 
+from musicdl.downloader.classes.Song import Song
+
 
 class BaseAudioProvider(metaclass=abc.ABCMeta):
     @classmethod

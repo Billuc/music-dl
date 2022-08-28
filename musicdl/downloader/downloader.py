@@ -16,16 +16,16 @@ from typing import Dict, List, Optional, Tuple, Type
 from yt_dlp.postprocessor.sponsorblock import SponsorBlockPP
 from yt_dlp.postprocessor.modify_chapters import ModifyChaptersPP
 
-from spotdl.types import Song
-from spotdl.utils.ffmpeg import FFmpegError, convert, get_ffmpeg_path
-from spotdl.utils.metadata import embed_metadata, MetadataError
-from spotdl.utils.formatter import create_file_name, restrict_filename
-from spotdl.providers.audio.base import AudioProvider
-from spotdl.providers.lyrics import Genius, MusixMatch, AzLyrics
-from spotdl.providers.lyrics.base import LyricsProvider
-from spotdl.providers.audio import YouTube, YouTubeMusic
-from spotdl.download.progress_handler import NAME_TO_LEVEL, ProgressHandler
-from spotdl.utils.config import get_errors_path, get_temp_path
+from musicdl.types import Song
+from musicdl.utils.ffmpeg import FFmpegError, convert, get_ffmpeg_path
+from musicdl.utils.metadata import embed_metadata, MetadataError
+from musicdl.utils.formatter import create_file_name, restrict_filename
+from musicdl.providers.audio.base import AudioProvider
+from musicdl.providers.lyrics import Genius, MusixMatch, AzLyrics
+from musicdl.providers.lyrics.base import LyricsProvider
+from musicdl.providers.audio import YouTube, YouTubeMusic
+from musicdl.downloader.progress_handler import NAME_TO_LEVEL, ProgressHandler
+from musicdl.utils.config import get_errors_path, get_temp_path
 
 
 AUDIO_PROVIDERS: Dict[str, Type[AudioProvider]] = {
@@ -165,7 +165,7 @@ class Downloader:
         )
 
         # If ffmpeg is the default value and it's not installed
-        # try to use the spotdl's ffmpeg
+        # try to use the musicdl's ffmpeg
         if ffmpeg == "ffmpeg" and shutil.which("ffmpeg") is None:
             ffmpeg_exec = get_ffmpeg_path()
             if ffmpeg_exec is None:

@@ -1,10 +1,7 @@
-
-
-
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from musicdl.downloader.data.song import Song
+from .Song import Song
 
 
 @dataclass(frozen=True)

@@ -1,25 +1,14 @@
-"""
-Playlist module for retrieving playlist data from Spotify.
-"""
-
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from spotdl.types.song import SongList
 from spotdl.utils.spotify import SpotifyClient
-from spotdl.types.song import Song
-
-
-class PlaylistError(Exception):
-    """
-    Base class for all exceptions related to playlists.
-    """
-
+from .SongList import SongList
+from .Song import Song
 
 @dataclass(frozen=True)
 class Playlist(SongList):
     """
-    Playlist class for retrieving playlist data from Spotify.
+    Playlist class for storing playlist data.
     """
 
     description: str

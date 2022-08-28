@@ -1,22 +1,12 @@
-"""
-Artist module for retrieving artist data from Spotify.
-"""
-
 from dataclasses import dataclass
 from typing import Any, Dict, List, Set
 
 from slugify import slugify
 
-from spotdl.types.song import SongList
-from spotdl.types.song import Song
-from spotdl.types.album import Album
+from .SongList import SongList
+from .Song import Song
+from .Album import Album
 from spotdl.utils.spotify import SpotifyClient
-
-
-class ArtistError(Exception):
-    """
-    Base class for all exceptions related to artists.
-    """
 
 
 @dataclass(frozen=True)

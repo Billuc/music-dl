@@ -1,18 +1,9 @@
-"""
-Saved module for handing the saved tracks from user library
-"""
-
 from dataclasses import dataclass
 from typing import Any, Dict, List
-from spotdl.types.song import SongList
-from spotdl.types.song import Song
+
+from .SongList import SongList
+from .Song import Song
 from spotdl.utils.spotify import SpotifyClient
-
-
-class SavedError(Exception):
-    """
-    Base class for all exceptions related to saved tracks.
-    """
 
 
 @dataclass(frozen=True)
