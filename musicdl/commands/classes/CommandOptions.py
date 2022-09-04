@@ -13,7 +13,6 @@ class CommandOptions:
     CommandOptions class. Contains all the options necessary to execute commands.
     """
 
-    operation: str
     query: List[str]
     audio_providers: List[str]
     lyrics_providers: List[str]
@@ -35,9 +34,4 @@ class CommandOptions:
     log_level: bool
     simple_tui: bool
     headless: bool
-    download_ffmpeg: bool       # Might not be needed
-    generate_config: bool       # Might not be needed
-    check_for_updates: bool     # Might not be needed
-    profile: bool               # Might not be needed
-    version: bool               # Might not be needed
 

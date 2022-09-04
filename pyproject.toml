@@ -42,6 +42,7 @@ uvicorn = "^0.17.1"
 pydantic = "^1.9.0"
 fastapi = "^0.78.0"
 nest_asyncio = "^1.5.4"
+kink = "^0.6.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"

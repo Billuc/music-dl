@@ -1,6 +1,8 @@
 import abc
 from typing import List
 
+from musicdl.commands.classes import CommandOptions
+
 
 
 class BaseCommand(metaclass=abc.ABCMeta):
@@ -11,12 +13,12 @@ class BaseCommand(metaclass=abc.ABCMeta):
                 NotImplemented)
 
     @abc.abstractmethod
-    def exec(self, query: List[str]) -> None:
+    def exec(self, options: CommandOptions) -> None:
         """
         Executes a command
 
         ### Arguments
-        - query: The queried arguments.
+        - options: The command options.
         """
 
         raise NotImplementedError

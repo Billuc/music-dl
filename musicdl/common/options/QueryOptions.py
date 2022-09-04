@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 
-@dataclass()
+@dataclass(init=False)
 class QueryOptions:
     """
     QueryOptions class. Contains all the options set in the query.
@@ -34,14 +34,43 @@ class QueryOptions:
     generate_config: bool
     check_for_updates: bool
     profile: bool
-    version: bool
 
 
     def has_special_args(self):
         return (
             self.download_ffmpeg is True or 
             self.generate_config is True or
-            self.check_for_updates is True or
-            self.version is True
+            self.check_for_updates is True
         )
+
+
+    def __repr__(self) -> str:
+        return f"""QueryOptions[
+    operation : {self.operation},
+    query : {self.query},
+    audio_providers: {self.audio_providers},
+    lyrics_providers: {self.lyrics_providers},
+    config: {self.config},
+    search_query: {self.search_query},
+    filter_results: {self.filter_results},
+    ffmpeg: {self.ffmpeg},
+    threads: {self.threads},
+    bitrate: {self.bitrate},
+    ffmpeg_args: {self.ffmpeg_args},
+    format: {self.format},
+    save_file: {self.save_file},
+    output: {self.output},
+    m3u: {self.m3u},
+    overwrite: {self.overwrite},
+    restrict: {self.restrict},
+    print_errors: {self.print_errors},
+    sponsor_block: {self.sponsor_block},
+    log_level: {self.log_level},
+    simple_tui: {self.simple_tui},
+    headless: {self.headless},
+    download_ffmpeg: {self.download_ffmpeg},
+    generate_config: {self.generate_config},
+    check_for_updates: {self.check_for_updates},
+    profile: {self.profile}
+]"""
 

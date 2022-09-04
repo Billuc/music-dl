@@ -14,29 +14,6 @@ from yt_dlp.utils import sanitize_filename
 
 from spotdl.types import Song
 
-VARS = [
-    "{title}",
-    "{artists}",
-    "{artist}",
-    "{album}",
-    "{album-artist}",
-    "{genre}",
-    "{disc-number}",
-    "{disc-count}",
-    "{duration}",
-    "{year}",
-    "{original-date}",
-    "{track-number}",
-    "{tracks-count}",
-    "{isrc}",
-    "{track-id}",
-    "{publisher}",
-    "{list-length}",
-    "{list-position}",
-    "{list-name}",
-    "{output-ext}",
-]
-
 
 def create_song_title(song_name: str, song_artists: List[str]) -> str:
     """

@@ -27,35 +27,6 @@ from rich.console import (
 
 from spotdl.types.song import Song
 
-# https://github.com/python/cpython/blob/3.10/Lib/logging/__init__.py
-CRITICAL = 50
-FATAL = CRITICAL
-ERROR = 40
-WARNING = 30
-WARN = WARNING
-INFO = 20
-DEBUG = 10
-NOTSET = 0
-
-LEVEL_TO_NAME = {
-    CRITICAL: "CRITICAL",
-    ERROR: "ERROR",
-    WARNING: "WARNING",
-    INFO: "INFO",
-    DEBUG: "DEBUG",
-    NOTSET: "NOTSET",
-}
-
-NAME_TO_LEVEL = {
-    "CRITICAL": CRITICAL,
-    "FATAL": FATAL,
-    "ERROR": ERROR,
-    "WARN": WARNING,
-    "WARNING": WARNING,
-    "INFO": INFO,
-    "DEBUG": DEBUG,
-    "NOTSET": NOTSET,
-}
 
 THEME = Theme(
     {

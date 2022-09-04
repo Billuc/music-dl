@@ -1,18 +1,19 @@
-from argparse import Namespace
 from musicdl.common.exceptions.MusicDLException import MusicDLException
-from musicdl.exec import QueryParser
+from .app_init import init_app
+from . import QueryParser
 
 def entry_point():
     """
     Console entry point for ytm_dl. This is where the magic happens.
     """
 
-    # Don't log too much
-    set_loggers()
-    #check_ffmpeg()
+    init_app()
 
     parser = QueryParser()
-    arguments = parser.parse_args()
-    _check_arguments(arguments)
 
+    try:
+        options = parser.parse_arguments()
+        print(options)
+    except MusicDLException as ex:
+        parser.print_help()
     
