@@ -1,5 +1,7 @@
 from argparse import Namespace
-from .. import QueryOptions
+
+from musicdl.commands.classes.CommandOptions import CommandOptions
+from musicdl.exec.classes import QueryOptions
 
 def fromNamespace(args: Namespace) -> QueryOptions:
     options = QueryOptions()
@@ -8,7 +10,7 @@ def fromNamespace(args: Namespace) -> QueryOptions:
     options.audio_providers = args_dict.get("audio_providers")
     options.bitrate = args_dict.get("bitrate")
     options.check_for_updates = args_dict.get("check_for_updates")
-    options.config = args_dict.get("config")
+    options.no_config = args_dict.get("no_config")
     options.download_ffmpeg = args_dict.get("download_ffmpeg")
     options.ffmpeg = args_dict.get("ffmpeg")
     options.ffmpeg_args = args_dict.get("ffmpeg_args")
@@ -33,3 +35,31 @@ def fromNamespace(args: Namespace) -> QueryOptions:
     options.threads = args_dict.get("threads")
 
     return options
+
+
+def toCommandOptions(opts: QueryOptions) -> CommandOptions:
+    command_opts = CommandOptions()
+
+    command_opts.audio_providers = opts.audio_providers
+    command_opts.bitrate = opts.bitrate
+    command_opts.ffmpeg = opts.ffmpeg
+    command_opts.ffmpeg_args = opts.ffmpeg_args
+    command_opts.filter_results = opts.filter_results
+    command_opts.format = opts.format
+    command_opts.headless = opts.headless
+    command_opts.log_level = opts.log_level
+    command_opts.lyrics_providers = opts.lyrics_providers
+    command_opts.m3u = opts.m3u
+    command_opts.output = opts.output
+    command_opts.overwrite = opts.overwrite
+    command_opts.print_errors = opts.print_errors
+    command_opts.query = opts.query
+    command_opts.restrict = opts.restrict
+    command_opts.search_query = opts.search_query
+    command_opts.simple_tui = opts.simple_tui
+    command_opts.sponsor_block = opts.sponsor_block
+    command_opts.threads = opts.threads
+
+    return command_opts
+
+

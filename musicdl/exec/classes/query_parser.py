@@ -14,9 +14,9 @@ from musicdl.common import (
     FFMPEG_FORMATS,
     FORMAT_VARIABLES,
     MusicDLException,
-    QueryOptions,
 )
-from musicdl.common.utils.QueryOptionsUtils import fromNamespace
+from . import QueryOptions
+from musicdl.exec.utils import fromNamespace
 
 
 @inject
@@ -143,10 +143,10 @@ class QueryParser:
 
         # Add config argument
         parser.add_argument(
-            "--config",
+            "--no-config",
             action="store_true",
             help=(
-                "Use the config file to download songs. "
+                "Do not use the config file to download songs. "
                 "It's located under `C:\\Users\\user\\.musicdl\\config.json` "
                 "or `~/.musicdl/config.json` under linux"
             ),

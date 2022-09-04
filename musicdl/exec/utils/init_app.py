@@ -4,7 +4,7 @@ import sys
 from kink import di
 from rich.traceback import install
 
-from .di import init_di
+from musicdl.exec.di import init_di
 from musicdl.common.consts.config import ERRORS_PATH, LOG_PATH, MUSICDL_PATH, TEMP_PATH
 from musicdl.common.consts.logging import CONSOLE_FORMATTER, DEBUG, DEFAULT_FORMATTER, DEFAULT_LOGGING_LEVEL, INFO
 

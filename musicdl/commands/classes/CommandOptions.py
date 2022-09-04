@@ -1,13 +1,9 @@
-import json
 
-from dataclasses import dataclass, asdict
-from typing import Dict, Any, List, Optional
-
-from musicdl.downloader.classes.SongList import SongList
+from dataclasses import dataclass
+from typing import List
 
 
-
-@dataclass()
+@dataclass(init=False)
 class CommandOptions:
     """
     CommandOptions class. Contains all the options necessary to execute commands.
@@ -16,7 +12,6 @@ class CommandOptions:
     query: List[str]
     audio_providers: List[str]
     lyrics_providers: List[str]
-    config: bool
     search_query: bool
     filter_results: bool
     ffmpeg: str

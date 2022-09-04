@@ -12,7 +12,7 @@ class QueryOptions:
     query: Optional[List[str]]
     audio_providers: List[str]
     lyrics_providers: List[str]
-    config: bool
+    no_config: bool
     search_query: bool
     filter_results: bool
     ffmpeg: str
@@ -35,14 +35,12 @@ class QueryOptions:
     check_for_updates: bool
     profile: bool
 
-
     def has_special_args(self):
         return (
-            self.download_ffmpeg is True or 
-            self.generate_config is True or
-            self.check_for_updates is True
+            self.download_ffmpeg is True
+            or self.generate_config is True
+            or self.check_for_updates is True
         )
-
 
     def __repr__(self) -> str:
         return f"""QueryOptions[
@@ -50,7 +48,7 @@ class QueryOptions:
     query : {self.query},
     audio_providers: {self.audio_providers},
     lyrics_providers: {self.lyrics_providers},
-    config: {self.config},
+    no_config: {self.no_config},
     search_query: {self.search_query},
     filter_results: {self.filter_results},
     ffmpeg: {self.ffmpeg},
@@ -73,4 +71,3 @@ class QueryOptions:
     check_for_updates: {self.check_for_updates},
     profile: {self.profile}
 ]"""
-
