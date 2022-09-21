@@ -3,7 +3,7 @@ from argparse import Namespace
 from musicdl.commands.classes.CommandOptions import CommandOptions
 from musicdl.exec.classes import QueryOptions
 
-def fromNamespace(args: Namespace) -> QueryOptions:
+def from_namespace(args: Namespace) -> QueryOptions:
     options = QueryOptions()
     args_dict = args.__dict__
 
@@ -37,7 +37,7 @@ def fromNamespace(args: Namespace) -> QueryOptions:
     return options
 
 
-def toCommandOptions(opts: QueryOptions) -> CommandOptions:
+def to_command_options(opts: QueryOptions) -> CommandOptions:
     command_opts = CommandOptions()
 
     command_opts.audio_providers = opts.audio_providers
@@ -61,5 +61,13 @@ def toCommandOptions(opts: QueryOptions) -> CommandOptions:
     command_opts.threads = opts.threads
 
     return command_opts
+
+
+def has_special_args(opts: QueryOptions) -> bool:
+    return (
+        opts.download_ffmpeg is True
+        or opts.generate_config is True
+        or opts.check_for_updates is True
+    )
 
 

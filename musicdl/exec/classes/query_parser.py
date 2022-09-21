@@ -16,7 +16,7 @@ from musicdl.common import (
     MusicDLException,
 )
 from . import QueryOptions
-from musicdl.exec.utils import fromNamespace
+from musicdl.exec.utils import from_namespace
 
 
 @inject
@@ -59,7 +59,7 @@ class QueryParser:
         self._logger.debug("Parsing...")
 
         arguments = self._parser.parse_args()
-        options = fromNamespace(arguments)
+        options = from_namespace(arguments)
         self._check_options(options)
 
         self._logger.debug("Parsed !")

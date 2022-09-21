@@ -35,13 +35,6 @@ class QueryOptions:
     check_for_updates: bool
     profile: bool
 
-    def has_special_args(self):
-        return (
-            self.download_ffmpeg is True
-            or self.generate_config is True
-            or self.check_for_updates is True
-        )
-
     def __repr__(self) -> str:
         return f"""QueryOptions[
     operation : {self.operation},

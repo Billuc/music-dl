@@ -19,4 +19,4 @@ class QueryExecuter:
 
     
     def exec(self, options: CommandOptions):
-        self._command.exec(options)
+        self._command.exec(options) # might need a try-expect

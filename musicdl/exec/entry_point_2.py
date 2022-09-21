@@ -4,6 +4,7 @@ from musicdl.common.exceptions.MusicDLException import MusicDLException
 from .utils import init_app, init_command
 from .classes import QueryParser, QueryOptions
 
+
 def entry_point():
     """
     Console entry point for musicdl. This is where the magic happens.
@@ -22,14 +23,13 @@ def entry_point():
         _execute_with_profile(options)
     else:
         init_command(options)
-        
+
 
 def _execute_with_profile(options: QueryOptions) -> None:
     with cProfile.Profile() as profile:
         init_command(options)
-    
+
     # Get profile's stats. They can be visualized using snakeviz
     stats = pstats.Stats(profile)
     stats.sort_stats(pstats.SortKey.TIME)
     stats.dump_stats("musicdl.profile")
-    

@@ -17,6 +17,23 @@ def init_app():
     _init_rich()
 
 
+def _check_folders():
+    if not MUSICDL_PATH.exists():
+        print("MusicDL folder not found: creating...")
+        os.mkdir(MUSICDL_PATH)
+        print("MusicDL folder created")
+
+    if not TEMP_PATH.exists():
+        print("Cache folder not found: creating...")
+        os.mkdir(TEMP_PATH)
+        print("Cache folder created")
+
+    if not ERRORS_PATH.exists():
+        print("Errors folder not found: creating...")
+        os.mkdir(ERRORS_PATH)
+        print("Errors folder created")
+
+
 def _init_default_logger():
     default_logger: logging.Logger = di[logging.Logger]
     default_logger.setLevel(DEFAULT_LOGGING_LEVEL)
@@ -44,19 +61,3 @@ def _init_rich():
     # rich: install traceback handler
     install(show_locals=False, extra_lines=1)
 
-
-def _check_folders():
-    if not MUSICDL_PATH.exists():
-        print("MusicDL folder not found: creating...")
-        os.mkdir(MUSICDL_PATH)
-        print("MusicDL folder created")
-
-    if not TEMP_PATH.exists():
-        print("Cache folder not found: creating...")
-        os.mkdir(TEMP_PATH)
-        print("Cache folder created")
-
-    if not ERRORS_PATH.exists():
-        print("Errors folder not found: creating...")
-        os.mkdir(ERRORS_PATH)
-        print("Errors folder created")

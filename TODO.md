@@ -8,6 +8,7 @@
 - Redo architecture (classes, utils, exec) for Spotify
 - Append Youtube & YoutubeMusic support (playlists)
 - Look at the web part and modify
+- check if frozens
 - Modify tests and add Youtube & YoutubeMusic
 - Remove or modify docker compose
 - Doc
