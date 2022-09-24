@@ -1,6 +1,6 @@
 from argparse import Namespace
 
-from musicdl.commands.classes.CommandOptions import CommandOptions
+from musicdl.commands import CommandOptions
 from musicdl.exec.classes import QueryOptions
 
 def from_namespace(args: Namespace) -> QueryOptions:

@@ -1,10 +1,11 @@
 from logging import Logger
+from kink import inject
 
 from musicdl.commands.interfaces import BaseCommand
 from musicdl.commands.classes import CommandOptions
 
 
-
+@inject
 class CheckUpdatesCommand(BaseCommand):
     _logger: Logger
     

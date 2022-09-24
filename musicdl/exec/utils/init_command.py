@@ -2,8 +2,9 @@ import json
 from typing import Any, Dict
 
 from musicdl.common import MusicDLException, is_ffmpeg_installed, CONFIG_PATH
+from musicdl.commands import init_di, AllowedCommands
 from musicdl.exec.classes import QueryOptions, QueryExecuter
-from .query_options_utils import has_special_args, to_command_options
+from musicdl.exec.extensions import has_special_args, to_command_options
 
 
 def init_command(options: QueryOptions) -> None:
@@ -12,10 +13,11 @@ def init_command(options: QueryOptions) -> None:
         _check_ffmpeg(options)
         _check_saved(options)
 
-    #di
+    operation = _to_allowed_command(options)
+    command_options = to_command_options(options)
+    init_di(operation, command_options)
 
     executer = QueryExecuter()
-    command_options = to_command_options(options)
     executer.exec(command_options)
 
 
@@ -68,3 +70,24 @@ def _check_saved(options: QueryOptions):
             "You must be logged in to use the saved query. \
 Log in by adding the --user-auth flag"
         )
+
+
+def _to_allowed_command(options: QueryOptions) -> AllowedCommands:
+    if (options.check_for_updates):
+        return AllowedCommands.CHECK_FOR_UPDATES
+    elif (options.download_ffmpeg):
+        return AllowedCommands.DOWNLOAD_FFMPEG
+    elif (options.generate_config):
+        return AllowedCommands.GENERATE_CONFIG
+    else:
+        if (options.operation == "download"):
+            return AllowedCommands.DOWNLOAD
+        elif (options.operation == "save"):
+            return AllowedCommands.SAVE
+        elif (options.operation == "sync"):
+            return AllowedCommands.SYNC
+        elif (options.operation == "web"):
+            return AllowedCommands.WEB
+
+    return AllowedCommands.UNKNOWN
+
