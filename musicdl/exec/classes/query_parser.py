@@ -10,10 +10,10 @@ from musicdl.common import (
     LYRICS_PROVIDERS,
     OPERATIONS,
     BITRATES,
-    NAME_TO_LEVEL,
     FFMPEG_FORMATS,
     FORMAT_VARIABLES,
     MusicDLException,
+    LoggingLevel
 )
 from . import QueryOptions
 from musicdl.exec.extensions import from_namespace, has_special_args
@@ -282,7 +282,7 @@ class QueryParser:
         # Add verbose argument
         parser.add_argument(
             "--log-level",
-            choices=NAME_TO_LEVEL.keys(),
+            choices=LoggingLevel.level_names(),
             help="Select log level.",
         )
 

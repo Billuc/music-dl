@@ -1,4 +1,3 @@
-from .classes import CommandOptions
-from .consts import AllowedCommands
-from .interfaces import BaseCommand
+from .classes import CommandOptions, AllowedOperations
 from .di import init_di
+from .interfaces import BaseCommandExecuter

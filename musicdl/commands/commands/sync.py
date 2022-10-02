@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
-from musicdl.downloader.downloader import Downloader
+from musicdl.downloader.downloader_old import Downloader
 from musicdl.utils.search import parse_query
 from musicdl.utils.formatter import create_file_name
 from musicdl.utils.m3u import create_m3u_file

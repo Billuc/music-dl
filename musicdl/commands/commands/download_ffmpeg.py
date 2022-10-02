@@ -1,27 +1,23 @@
 from logging import Logger
 from kink import inject
 
-from musicdl.commands.interfaces import BaseCommand
-from musicdl.commands.classes import CommandOptions
+from musicdl.common import BaseResponsibilityChainLink
+from musicdl.commands.classes import CommandOptions, AllowedOperations
 from musicdl.common import is_ffmpeg_installed, get_local_ffmpeg, download_ffmpeg
 
 
 
 @inject
-class DownloadFFMPEGCommand(BaseCommand):
+class DownloadFFMPEGCommand(BaseResponsibilityChainLink[CommandOptions]):
     _logger: Logger
     
     def __init__(self, logger: Logger):
         self._logger = logger
 
 
-    def exec(self, options: CommandOptions) -> None:
-        """
-        Executes a command : Download FFMpeg
-
-        ### Arguments
-        - options: The command options.
-        """
+    def exec(self, options: CommandOptions) -> bool:
+        if (not options.operation == AllowedOperations.DOWNLOAD_FFMPEG):
+            return False
 
         if is_ffmpeg_installed():
             self._logger.debug("FFmpeg already installed")
@@ -30,10 +26,10 @@ class DownloadFFMPEGCommand(BaseCommand):
             )
 
             if overwrite_ffmpeg.lower() != "y":
-                return None
+                return True
         
         self._download_and_check_ffmpeg()
-        return None
+        return True
 
 
     def _download_and_check_ffmpeg(self):

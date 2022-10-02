@@ -27,7 +27,7 @@ class QueryOptions:
     restrict: bool
     print_errors: bool
     sponsor_block: bool
-    log_level: bool
+    log_level: str
     simple_tui: bool
     headless: bool
     download_ffmpeg: bool

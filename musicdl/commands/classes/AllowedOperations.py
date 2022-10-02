@@ -1,6 +1,6 @@
 from enum import Enum
 
-class AllowedCommands(Enum):
+class AllowedOperations(Enum):
     UNKNOWN = 0
     CHECK_FOR_UPDATES = 1
     DOWNLOAD_FFMPEG = 2

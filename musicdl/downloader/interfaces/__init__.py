@@ -1,3 +1,4 @@
 from .BaseAudioProvider import BaseAudioProvider
 from .BaseLyricsProvider import BaseLyricsProvider
 from .BaseDownloader import BaseDownloader
+from .BaseProgressLogger import BaseProgressLogger

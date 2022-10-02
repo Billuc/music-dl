@@ -16,6 +16,7 @@ from typing import Dict, List, Optional, Tuple, Type
 from yt_dlp.postprocessor.sponsorblock import SponsorBlockPP
 from yt_dlp.postprocessor.modify_chapters import ModifyChaptersPP
 
+from musicdl.types import Song
 from musicdl.utils.ffmpeg import FFmpegError, convert, get_ffmpeg_path
 from musicdl.utils.metadata import embed_metadata, MetadataError
 from musicdl.utils.formatter import create_file_name, restrict_filename
@@ -27,11 +28,33 @@ from musicdl.downloader.progress_handler_old import NAME_TO_LEVEL, ProgressHandl
 from musicdl.utils.config import get_errors_path, get_temp_path
 
 
-from musicdl.downloader.classes import Song, DownloaderSettings
-from musicdl.downloader.interfaces import BaseAudioProvider, BaseLyricsProvider, BaseProgressLogger
-from musicdl.common import MusicDLException
+AUDIO_PROVIDERS: Dict[str, Type[AudioProvider]] = {
+    "youtube": YouTube,
+    "youtube-music": YouTubeMusic,
+}
+
+LYRICS_PROVIDERS: Dict[str, Type[LyricsProvider]] = {
+    "genius": Genius,
+    "musixmatch": MusixMatch,
+    "azlyrics": AzLyrics,
+}
+
+SPONSOR_BLOCK_CATEGORIES = {
+    "sponsor": "Sponsor",
+    "intro": "Intermission/Intro Animation",
+    "outro": "Endcards/Credits",
+    "selfpromo": "Unpaid/Self Promotion",
+    "preview": "Preview/Recap",
+    "filler": "Filler Tangent",
+    "interaction": "Interaction Reminder",
+    "music_offtopic": "Non-Music Section",
+}
 
 
+class DownloaderError(Exception):
+    """
+    Base class for all exceptions related to downloaders.
+    """
 
 
 class Downloader:
@@ -40,47 +63,170 @@ class Downloader:
     It handles the downloading/moving songs, multthreading, metadata embedding etc.
     """
 
-    _initialized: bool
-    _audio_provider: BaseAudioProvider
-    _lyrics_provider: BaseLyricsProvider
-    _progress_handler: BaseProgressLogger
-    _loop: asyncio.AbstractEventLoop
-    _semaphore: asyncio.Semaphore
-    _thread_executor: concurrent.futures.ThreadPoolExecutor
-
-
     def __init__(
         self,
-        audio_provider: BaseAudioProvider,
-        lyrics_provider: BaseLyricsProvider,
-        progress_handler: BaseProgressLogger,
-        loop: asyncio.AbstractEventLoop
+        audio_providers: Optional[List[str]] = None,
+        lyrics_providers: Optional[List[str]] = None,
+        ffmpeg: str = "ffmpeg",
+        bitrate: Optional[str] = None,
+        ffmpeg_args: Optional[str] = None,
+        output_format: str = "mp3",
+        threads: int = 4,
+        output: str = ".",
+        save_file: Optional[str] = None,
+        overwrite: str = "skip",
+        cookie_file: Optional[str] = None,
+        filter_results: bool = True,
+        search_query: Optional[str] = None,
+        log_level: str = "INFO",
+        simple_tui: bool = False,
+        loop: Optional[asyncio.AbstractEventLoop] = None,
+        restrict: bool = False,
+        print_errors: bool = False,
+        sponsor_block: bool = False,
     ):
-        self._initialized = False
-        self._audio_provider = audio_provider
-        self._lyrics_provider = lyrics_provider
-        self._progress_handler = progress_handler
-        self._loop = loop
+        """
+        Initialize the Downloader class.
 
+        ### Arguments
+        - audio_provider: Audio providers to use.
+        - lyrics_provider: The lyrics providers to use.
+        - ffmpeg: The ffmpeg executable to use.
+        - variable_bitrate: The variable bitrate to use.
+        - constant_bitrate: The constant bitrate to use.
+        - ffmpeg_args: The ffmpeg arguments to use.
+        - output_format: The output format to use.
+        - threads: The number of threads to use.
+        - output: The output directory to use.
+        - save_file: The save file to use when saving/loading song metadata.
+        - overwrite: The overwrite mode to use (force/skip).
+        - cookie_file: The cookie file to use for yt-dlp.
+        - filter_results: Whether to filter results.
+        - search_query: The search query to use.
+        - log_level: The log level to use.
+        - simple_tui: Whether to use simple tui.
+        - loop: The event loop to use.
+        - restrict: Whether to restrict the filename to ASCII characters.
+        - print_errors: Whether to print errors on exit.
+        - sponsor_block: Whether to remove sponsor segments using sponsor block postprocessor.
 
-    def update_settings(self, settings: DownloaderSettings) -> None:
+        ### Notes
+        - `search-query` uses the same format as `output`.
+        - if `audio_provider` or `lyrics_provider` is a list, then if no match is found,
+            the next provider in the list will be used.
+        """
+
+        if audio_providers is None:
+            audio_providers = ["youtube-music"]
+
+        if lyrics_providers is None:
+            lyrics_providers = ["musixmatch"]
+
+        audio_providers_classes: List[Type[AudioProvider]] = []
+        lyrics_providers_classes: List[Type[LyricsProvider]] = []
+
+        for provider in audio_providers:
+            new_audio_provider = AUDIO_PROVIDERS.get(provider)
+            if new_audio_provider is None:
+                raise DownloaderError(f"Invalid audio provider: {provider}")
+
+            audio_providers_classes.append(new_audio_provider)
+
+        if len(audio_providers_classes) == 0:
+            raise DownloaderError(
+                "No audio providers specified. Please specify at least one."
+            )
+
+        for provider in lyrics_providers:
+            new_lyrics_provider = LYRICS_PROVIDERS.get(provider)
+            if new_lyrics_provider is None:
+                raise DownloaderError(f"Invalid lyrics provider: {provider}")
+
+            lyrics_providers_classes.append(new_lyrics_provider)
+
+        if loop is None:
+            if sys.platform == "win32":
+                # ProactorEventLoop is required on Windows to run subprocess asynchronously
+                # it is default since Python 3.8 but has to be changed for previous versions
+                self.loop = asyncio.ProactorEventLoop()
+            else:
+                self.loop = asyncio.new_event_loop()
+
+            asyncio.set_event_loop(self.loop)
+        else:
+            self.loop = loop
+
         # semaphore is required to limit concurrent asyncio executions
-        self._semaphore = asyncio.Semaphore(settings.threads)
+        self.semaphore = asyncio.Semaphore(threads)
 
         # thread pool executor is used to run blocking (CPU-bound) code from a thread
-        self._thread_executor = concurrent.futures.ThreadPoolExecutor(
-            max_workers=settings.threads
+        self.thread_executor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=threads
         )
 
+        # If ffmpeg is the default value and it's not installed
+        # try to use the musicdl's ffmpeg
+        if ffmpeg == "ffmpeg" and shutil.which("ffmpeg") is None:
+            ffmpeg_exec = get_ffmpeg_path()
+            if ffmpeg_exec is None:
+                raise DownloaderError("ffmpeg is not installed")
+
+            ffmpeg = str(ffmpeg_exec.absolute())
+
+        self.output = output
+        self.output_format = output_format
+        self.save_file = save_file
+        self.threads = threads
+        self.cookie_file = cookie_file
+        self.overwrite = overwrite
+        self.search_query = search_query
+        self.filter_results = filter_results
+        self.ffmpeg = ffmpeg
+        self.bitrate = bitrate
+        self.ffmpeg_args = ffmpeg_args
+        self.restrict = restrict
+        self.print_errors = print_errors
+        self.errors: List[str] = []
+        self.sponsor_block = sponsor_block
+        self.audio_providers_classes = audio_providers_classes
+        self.progress_handler = ProgressHandler(NAME_TO_LEVEL[log_level], simple_tui)
+
+        self.lyrics_providers: List[LyricsProvider] = []
+        for lyrics_provider_class in lyrics_providers_classes:
+            self.lyrics_providers.append(lyrics_provider_class())
+
+        self.progress_handler.debug("Downloader initialized")
 
     def download_song(self, song: Song) -> Tuple[Song, Optional[Path]]:
-        results = self.download_multiple_songs([song])
-        return results[0]
+        """
+        Download a single song.
 
+        ### Arguments
+        - song: The song to download.
+
+        ### Returns
+        - tuple with the song and the path to the downloaded file if successful.
+        """
+
+        self.progress_handler.set_song_count(1)
+
+        results = self.download_multiple_songs([song])
+
+        return results[0]
 
     def download_multiple_songs(
         self, songs: List[Song]
     ) -> List[Tuple[Song, Optional[Path]]]:
+        """
+        Download multiple songs to the temp directory.
+
+        ### Arguments
+        - songs: The songs to download.
+
+        ### Returns
+        - list of tuples with the song and the path to the downloaded file if successful.
+        """
+
         self.progress_handler.set_song_count(len(songs))
 
         tasks = [self.pool_download(song) for song in songs]
@@ -123,7 +269,7 @@ class Downloader:
                 self.thread_executor, self.search_and_download, song
             )
 
-    def search(self, song: Song) -> str:
+    def search(self, song: Song) -> Tuple[str, AudioProvider]:
         """
         Search for a song using all available providers.
 
@@ -134,13 +280,27 @@ class Downloader:
         - tuple with download url and audio provider if successful.
         """
 
-        result = self._audio_provider.search(song)
+        audio_providers: List[AudioProvider] = []
+        for audio_provider_class in self.audio_providers_classes:
+            audio_providers.append(
+                audio_provider_class(
+                    output_format=self.output_format,
+                    cookie_file=self.cookie_file,
+                    search_query=self.search_query,
+                    filter_results=self.filter_results,
+                )
+            )
 
-        if result is None:
-            raise MusicDLException(f"No results found for song: {song.display_name}")
+        for audio_provider in audio_providers:
+            url = audio_provider.search(song)
+            if url:
+                return url, audio_provider
 
-        return result
+            self.progress_handler.debug(
+                f"{audio_provider.name} failed to find {song.display_name}"
+            )
 
+        raise LookupError(f"No results found for song: {song.display_name}")
 
     def search_lyrics(self, song: Song) -> str:
         """

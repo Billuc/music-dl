@@ -2,14 +2,39 @@
 Download module for the console.
 """
 
+from logging import Logger
+from kink import inject
 import json
 
 from typing import List, Optional
 from pathlib import Path
 
-from musicdl.downloader.downloader import Downloader
+from musicdl.commands.interfaces import BaseCommand
+from musicdl.commands.classes import CommandOptions
+from musicdl.downloader import BaseDownloader
+
+from musicdl.downloader.downloader_old import Downloader
 from musicdl.utils.m3u import create_m3u_file
 from musicdl.utils.search import get_simple_songs
+
+
+@inject
+class DownloadCommand(BaseCommand):
+    _logger: Logger
+    _downloader: BaseDownloader
+
+    def __init__(self, logger: Logger, downloader: BaseDownloader):
+        self._logger = logger
+        self._downloader = downloader
+
+
+    def exec(self, options: CommandOptions) -> None:
+        # parse query to get songs or song searches
+        # download musics accordingly
+        # if m3u, create a m3u file
+        # if save_path dump json
+
+        return None
 
 
 def download(

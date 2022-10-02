@@ -1,6 +1,6 @@
 from argparse import Namespace
 
-from musicdl.commands import CommandOptions
+from musicdl.commands import CommandOptions, AllowedOperations
 from musicdl.exec.classes import QueryOptions
 
 def from_namespace(args: Namespace) -> QueryOptions:
@@ -40,6 +40,7 @@ def from_namespace(args: Namespace) -> QueryOptions:
 def to_command_options(opts: QueryOptions) -> CommandOptions:
     command_opts = CommandOptions()
 
+    command_opts.operation = _to_allowed_operation(opts)
     command_opts.audio_providers = opts.audio_providers
     command_opts.bitrate = opts.bitrate
     command_opts.ffmpeg = opts.ffmpeg
@@ -69,5 +70,27 @@ def has_special_args(opts: QueryOptions) -> bool:
         or opts.generate_config is True
         or opts.check_for_updates is True
     )
+
+
+
+
+def _to_allowed_operation(options: QueryOptions) -> AllowedOperations:
+    if (options.check_for_updates):
+        return AllowedOperations.CHECK_FOR_UPDATES
+    elif (options.download_ffmpeg):
+        return AllowedOperations.DOWNLOAD_FFMPEG
+    elif (options.generate_config):
+        return AllowedOperations.GENERATE_CONFIG
+    else:
+        if (options.operation == "download"):
+            return AllowedOperations.DOWNLOAD
+        elif (options.operation == "save"):
+            return AllowedOperations.SAVE
+        elif (options.operation == "sync"):
+            return AllowedOperations.SYNC
+        elif (options.operation == "web"):
+            return AllowedOperations.WEB
+
+    return AllowedOperations.UNKNOWN
 
 

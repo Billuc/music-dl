@@ -1,24 +1,25 @@
 from logging import Logger
 from kink import inject
 
-from musicdl.commands.interfaces import BaseCommand
-from musicdl.commands.classes import CommandOptions
+from musicdl.common import BaseResponsibilityChainLink
+from musicdl.commands.classes import CommandOptions, AllowedOperations
 
 
 @inject
-class CheckUpdatesCommand(BaseCommand):
+class CheckUpdatesCommand(BaseResponsibilityChainLink[CommandOptions]):
+    """
+    Check for updates
+    """
+    
     _logger: Logger
     
     def __init__(self, logger: Logger):
         self._logger = logger
 
 
-    def exec(self, options: CommandOptions) -> None:
-        """
-        Executes a command : Checks for updates
-
-        ### Arguments
-        - options: The command options.
-        """
+    def exec(self, options: CommandOptions) -> bool:
+        if not options.operation == AllowedOperations.CHECK_FOR_UPDATES:
+            return False
 
         raise NotImplementedError
+        return True

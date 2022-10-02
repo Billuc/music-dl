@@ -1,2 +1,2 @@
 from .init_app import init_app
-from .init_command import init_command
+from .exec_command import exec_command

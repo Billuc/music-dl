@@ -4,16 +4,7 @@ from .sponsor_block_categories import SPONSOR_BLOCK_CATEGORIES
 from .operations import OPERATIONS
 from .bitrates import BITRATES
 from .logging import (
-    DEBUG,
-    CRITICAL,
-    ERROR,
-    FATAL,
-    INFO,
-    NOTSET,
-    WARN,
-    WARNING,
-    NAME_TO_LEVEL,
-    LEVEL_TO_NAME,
+    LoggingLevel,
     DEFAULT_LOGGING_LEVEL,
     DEFAULT_FORMATTER,
     CONSOLE_FORMATTER

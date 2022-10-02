@@ -24,8 +24,8 @@ from starlette.types import Scope
 
 import nest_asyncio
 
-from musicdl.downloader.downloader import Downloader, DownloaderError
-from musicdl.downloader.progress_handler import NAME_TO_LEVEL, ProgressHandler, SongTracker
+from musicdl.downloader.downloader_old import Downloader, DownloaderError
+from musicdl.downloader.progress_handler_old import NAME_TO_LEVEL, ProgressHandler, SongTracker
 from musicdl.types.song import Song
 from musicdl.utils.github import download_github_dir
 from musicdl.utils.search import parse_query

@@ -1,36 +1,22 @@
+from enum import Enum
 import logging
-from typing import Dict
+from typing import Dict, List
 
 
 # https://github.com/python/cpython/blob/3.10/Lib/logging/__init__.py
-CRITICAL = 50
-FATAL = CRITICAL
-ERROR = 40
-WARNING = 30
-WARN = WARNING
-INFO = 20
-DEBUG = 10
-NOTSET = 0
-
-LEVEL_TO_NAME: Dict[int, str] = {
-    CRITICAL: "CRITICAL",
-    ERROR: "ERROR",
-    WARNING: "WARNING",
-    INFO: "INFO",
-    DEBUG: "DEBUG",
-    NOTSET: "NOTSET",
-}
-
-NAME_TO_LEVEL: Dict[str, int] = {
-    "CRITICAL": CRITICAL,
-    "FATAL": FATAL,
-    "ERROR": ERROR,
-    "WARN": WARNING,
-    "WARNING": WARNING,
-    "INFO": INFO,
-    "DEBUG": DEBUG,
-    "NOTSET": NOTSET,
-}
+class LoggingLevel(Enum):
+    CRITICAL = 50
+    FATAL = 50
+    ERROR = 40
+    WARNING = 30
+    WARN = 30
+    INFO = 20
+    DEBUG = 10
+    NOTSET = 0
+    
+    @classmethod
+    def level_names(cls) -> List[str]:
+        return cls.__members__.keys()
 
 # logging formatters
 
@@ -48,6 +34,6 @@ MINIMAL_FORMATTER = logging.Formatter(
     fmt="%(message)s",
 )
 
-DEFAULT_LOGGING_LEVEL = DEBUG
+DEFAULT_LOGGING_LEVEL = LoggingLevel.DEBUG
 DEFAULT_FORMATTER = EXHAUSTIVE_FORMATTER
 CONSOLE_FORMATTER = MINIMAL_FORMATTER

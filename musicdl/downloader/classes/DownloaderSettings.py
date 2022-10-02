@@ -4,18 +4,14 @@ from typing import List
 
 from musicdl.common import LoggingLevel
 
-from .AllowedOperations import AllowedOperations
 
 @dataclass(init=False)
-class CommandOptions:
+class DownloaderSettings:
     """
     CommandOptions class. Contains all the options necessary to execute commands.
     """
 
-    operation: AllowedOperations
     query: List[str]
-    audio_providers: List[str]
-    lyrics_providers: List[str]
     search_query: bool
     filter_results: bool
     ffmpeg: str
@@ -33,4 +29,3 @@ class CommandOptions:
     log_level: LoggingLevel
     simple_tui: bool
     headless: bool
-

@@ -1,7 +1,10 @@
 from kink import inject
 from logging import Logger
 
-from musicdl.commands import BaseCommand, CommandOptions
+from musicdl.commands import BaseCommandExecuter
+
+from musicdl.exec.classes import QueryOptions
+from musicdl.exec.extensions import to_command_options
 
 
 @inject
@@ -11,12 +14,19 @@ class QueryExecuter:
     """
 
     _logger: Logger
-    _command: BaseCommand
+    _commandExecuter: BaseCommandExecuter
 
-    def __init__(self, logger: Logger, command: BaseCommand):
+    def __init__(self, logger: Logger, commandExecuter: BaseCommandExecuter):
         self._logger = logger
-        self._command = command
+        self._commandExecuter = commandExecuter
 
     
-    def exec(self, options: CommandOptions):
-        self._command.exec(options) # might need a try-expect
+    def exec(self, options: QueryOptions):
+        command_options = to_command_options(options)
+
+        has_executed = self._commandExecuter.exec(command_options)
+
+        if not has_executed:
+            self._logger.error("Something went wrong : Command not found !")
+
+

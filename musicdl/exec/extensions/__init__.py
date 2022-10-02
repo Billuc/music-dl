@@ -1,1 +1,2 @@
-from .query_options_utils import from_namespace, has_special_args, to_command_options
+from .query_options_extensions import from_namespace, has_special_args, to_command_options
+from .config_options_extensions import from_dict

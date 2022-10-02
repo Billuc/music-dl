@@ -3,10 +3,8 @@ Module that holds the ProgressHandler class and Song Tracker class.
 """
 
 import logging
-from logging import Logger
 
 from typing import Any, Callable, Dict, Optional, List
-from kink import inject
 
 from rich.text import Text
 from rich.theme import Theme
@@ -26,8 +24,8 @@ from rich.console import (
     detect_legacy_windows,
     OverflowMethod,
 )
-from musicdl.downloader.classes import DownloaderSettings, Song
-from musicdl.downloader.interfaces import BaseProgressLogger
+
+from spotdl.types.song import Song
 
 
 THEME = Theme(
@@ -47,21 +45,6 @@ THEME = Theme(
         "progress.remaining": "rgb(40,100,40)",
     }
 )
-
-
-@inject
-class ProgressLogger(BaseProgressLogger):
-    _logger: Logger
-    _console: Console
-
-    def __init__(self, logger: Logger, console: Console):
-        self._logger = logger
-        self._console = console
-
-    
-    def update_settings(settings: DownloaderSettings):
-
-
 
 
 class ProgressHandlerError(Exception):
