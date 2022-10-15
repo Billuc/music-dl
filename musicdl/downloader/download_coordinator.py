@@ -28,65 +28,74 @@ from musicdl.utils.config import get_errors_path, get_temp_path
 
 
 from musicdl.downloader.classes import Song, DownloaderSettings
-from musicdl.downloader.interfaces import BaseAudioProvider, BaseLyricsProvider, BaseProgressLogger
+from musicdl.downloader.interfaces import (
+    BaseAudioProvider, 
+    BaseLyricsProvider, 
+    BaseProgressLogger,
+    BaseDownloadCoordinator,
+    BaseDownloader,
+    BaseAudioConverter,
+    BaseParallelExecutor
+)
 from musicdl.common import MusicDLException
 
 
 
 
-class Downloader:
+class DownloadCoordinator(BaseDownloadCoordinator):
     """
     Downloader class, this is where all the downloading pre/post processing happens etc.
     It handles the downloading/moving songs, multthreading, metadata embedding etc.
     """
 
     _initialized: bool
+    
     _audio_provider: BaseAudioProvider
     _lyrics_provider: BaseLyricsProvider
+    _downloader: BaseDownloader
+    _audio_converter: BaseAudioConverter
+
     _progress_logger: BaseProgressLogger
-    _loop: asyncio.AbstractEventLoop
-    _semaphore: asyncio.Semaphore
-    _thread_executor: concurrent.futures.ThreadPoolExecutor
+    _parallel_executor: BaseParallelExecutor
+
 
 
     def __init__(
         self,
         audio_provider: BaseAudioProvider,
         lyrics_provider: BaseLyricsProvider,
+        downloader: BaseDownloader,
         progress_logger: BaseProgressLogger,
-        loop: asyncio.AbstractEventLoop
+        parallel_executor: BaseParallelExecutor,
+        audio_converter: BaseAudioConverter
     ):
         self._initialized = False
         self._audio_provider = audio_provider
         self._lyrics_provider = lyrics_provider
+        self._downloader = downloader
         self._progress_logger = progress_logger
-        self._loop = loop
+        self._parallel_executor = parallel_executor
+        self._audio_converter = audio_converter
 
 
     def update_settings(self, settings: DownloaderSettings) -> None:
-        # semaphore is required to limit concurrent asyncio executions
-        self._semaphore = asyncio.Semaphore(settings.threads)
+        self._audio_provider.update_settings(settings)
+        self._lyrics_provider.update_settings(settings)
+        self._downloader.update_settings(settings)
+        self._progress_logger.update_settings(settings)
+        self._parallel_executor.configure(settings.threads)
+        self._audio_converter.configure(settings)
+        self._initialized = True
 
-        # thread pool executor is used to run blocking (CPU-bound) code from a thread
-        self._thread_executor = concurrent.futures.ThreadPoolExecutor(
-            max_workers=settings.threads
-        )
 
-
-    def download_song(self, song: Song) -> Tuple[Song, Optional[Path]]:
-        results = self.download_multiple_songs([song])
+    def download_song(self, url: str) -> Tuple[Song, Optional[Path]]:
+        results = self.download_multiple_songs([url])
         return results[0]
 
 
-    def download_multiple_songs(
-        self, songs: List[Song]
-    ) -> List[Tuple[Song, Optional[Path]]]:
-        self.progress_handler.set_song_count(len(songs))
-
-        tasks = [self.pool_download(song) for song in songs]
-
-        # call all task asynchronously, and wait until all are finished
-        results = list(self.loop.run_until_complete(self._aggregate_tasks(tasks)))
+    def download_multiple_songs(self, query: List[str]) -> List[Tuple[Song, Optional[Path]]]:
+        self.progress_handler.set_song_count(len(query))
+        results = list(self._parallel_executor.execute_function(self._download, query, return_exceptions=True))
 
         if self.print_errors:
             for error in self.errors:
@@ -98,89 +107,20 @@ class Downloader:
 
         return results
 
-    async def pool_download(self, song: Song) -> Tuple[Song, Optional[Path]]:
-        """
-        Run asynchronous task in a pool to make sure that all processes.
-
-        ### Arguments
-        - song: The song to download.
-
-        ### Returns
-        - tuple with the song and the path to the downloaded file if successful.
-
-        ### Notes
-        - This method calls `self.search_and_download` in a new thread.
-        """
-
-        # tasks that cannot acquire semaphore will wait here until it's free
-        # only certain amount of tasks can acquire the semaphore at the same time
-        async with self.semaphore:
-            # The following function calls blocking code, which would block whole event loop.
-            # Therefore it has to be called in a separate thread via ThreadPoolExecutor. This
-            # is not a problem, since GIL is released for the I/O operations, so it shouldn't
-            # hurt performance.
-            return await self.loop.run_in_executor(
-                self.thread_executor, self.search_and_download, song
-            )
-
-    def search(self, song: Song) -> str:
-        """
-        Search for a song using all available providers.
-
-        ### Arguments
-        - song: The song to search for.
-
-        ### Returns
-        - tuple with download url and audio provider if successful.
-        """
-
-        result = self._audio_provider.search(song)
-
-        if result is None:
-            raise MusicDLException(f"No results found for song: {song.display_name}")
-
-        return result
+    def _download(self, url: str) -> Tuple[Song, Optional[Path]]:
+        (song, youtube_url) = self._audio_provider.search(url)
+        download_info = self._downloader.download_song(youtube_url)
+        self._audio_converter.convert() # TODO
+        # sponsor block
+        lyrics = self._lyrics_provider.get_lyrics(song)
+        # embed metadata
 
 
-    def search_lyrics(self, song: Song) -> str:
-        """
-        Search for lyrics using all available providers.
 
-        ### Arguments
-        - song: The song to search for.
 
-        ### Returns
-        - lyrics if successful.
-        """
 
-        for lyrics_provider in self.lyrics_providers:
-            lyrics = lyrics_provider.get_lyrics(song.name, song.artists)
-            if lyrics:
-                self.progress_handler.debug(
-                    f"Found lyrics for {song.display_name} on {lyrics_provider.name}"
-                )
-                return lyrics
 
-            self.progress_handler.debug(
-                f"{lyrics_provider.name} failed to find lyrics "
-                f"for {song.display_name}"
-            )
 
-        raise LookupError(f"No lyrics found for song: {song.display_name}")
-
-    def search_and_download(self, song: Song) -> Tuple[Song, Optional[Path]]:
-        """
-        Search for the song and download it.
-
-        ### Arguments
-        - song: The song to download.
-
-        ### Returns
-        - tuple with the song and the path to the downloaded file if successful.
-
-        ### Notes
-        - This function is synchronous.
-        """
 
         # Check if we have all the metadata
         # and that the song object is not a placeholder
@@ -362,11 +302,3 @@ class Downloader:
                 f"{song.url} - {exception.__class__.__name__}: {exception}"
             )
             return song, None
-
-    @staticmethod
-    async def _aggregate_tasks(tasks):
-        """
-        Aggregate the futures and return the results
-        """
-
-        return await asyncio.gather(*(task for task in tasks))

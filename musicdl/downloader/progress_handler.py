@@ -26,40 +26,41 @@ from rich.console import (
     detect_legacy_windows,
     OverflowMethod,
 )
-from musicdl.downloader.classes import DownloaderSettings, Song
+from musicdl.downloader.classes import Song, DownloaderSettings, LoggingProgressLogger, RichProgressLogger
 from musicdl.downloader.interfaces import BaseProgressLogger
 
 
-THEME = Theme(
-    {
-        "bar.back": "grey23",
-        "bar.complete": "rgb(165,66,129)",
-        "bar.finished": "rgb(114,156,31)",
-        "bar.pulse": "rgb(165,66,129)",
-        "general": "green",
-        "nonimportant": "rgb(40,100,40)",
-        "progress.data.speed": "red",
-        "progress.description": "none",
-        "progress.download": "green",
-        "progress.filesize": "green",
-        "progress.filesize.total": "green",
-        "progress.percentage": "green",
-        "progress.remaining": "rgb(40,100,40)",
-    }
-)
+
+class ProgressLoggerProxy(BaseProgressLogger):
+    _progress_logger: BaseProgressLogger
+
+    def update_settings(self, settings: DownloaderSettings):
+        if (settings.simple_tui):
+            self._progress_logger = LoggingProgressLogger()
+        else:
+            self._progress_logger = RichProgressLogger()
+        
+        self._progress_logger.update_settings(settings)
 
 
-@inject
-class ProgressLogger(BaseProgressLogger):
-    _logger: Logger
-    _console: Console
+    def debug(self, message: str) -> None:
+        self._progress_logger.debug(message)
 
-    def __init__(self, logger: Logger, console: Console):
-        self._logger = logger
-        self._console = console
 
-    
-    def update_settings(settings: DownloaderSettings):
+    def info(self, message: str) -> None:
+        self._progress_logger.info(message)
+
+
+    def warn(self, message: str) -> None:
+        self._progress_logger.warn(message)
+
+
+    def error(self, message: str) -> None:
+        self._progress_logger.error(message)
+
+
+    def close(self) -> None:
+        self._progress_logger.close()
 
 
 
