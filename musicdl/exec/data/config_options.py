@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List
 
 
-@dataclass(init=False)
+@dataclass
 class ConfigOptions:
     """
     ConfigOptions class. Contains all the options that could be set in the config file.

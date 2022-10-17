@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 
-@dataclass(init=False)
+@dataclass
 class QueryOptions:
     """
     QueryOptions class. Contains all the options set in the query.

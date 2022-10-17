@@ -6,7 +6,7 @@ from musicdl.common import LoggingLevel
 
 from .AllowedOperations import AllowedOperations
 
-@dataclass(init=False)
+@dataclass
 class CommandOptions:
     """
     CommandOptions class. Contains all the options necessary to execute commands.

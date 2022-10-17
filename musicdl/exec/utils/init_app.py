@@ -6,7 +6,7 @@ from rich.traceback import install
 
 from musicdl.exec.di import init_di
 from musicdl.common.consts.config import ERRORS_PATH, LOG_PATH, MUSICDL_PATH, TEMP_PATH
-from musicdl.common.consts.logging import CONSOLE_FORMATTER, DEBUG, DEFAULT_FORMATTER, DEFAULT_LOGGING_LEVEL, INFO
+from musicdl.common.consts.logging import CONSOLE_FORMATTER, LoggingLevel, DEFAULT_FORMATTER, DEFAULT_LOGGING_LEVEL
 
 
 def init_app():
@@ -24,9 +24,9 @@ def _check_folders():
         print("MusicDL folder created")
 
     if not TEMP_PATH.exists():
-        print("Cache folder not found: creating...")
+        print("Temp folder not found: creating...")
         os.mkdir(TEMP_PATH)
-        print("Cache folder created")
+        print("Temp folder created")
 
     if not ERRORS_PATH.exists():
         print("Errors folder not found: creating...")
@@ -39,11 +39,11 @@ def _init_default_logger():
     default_logger.setLevel(DEFAULT_LOGGING_LEVEL)
 
     file_handler = logging.FileHandler(LOG_PATH, mode="w", encoding="utf8")
-    file_handler.setLevel(DEBUG)
+    file_handler.setLevel(LoggingLevel.DEBUG)
     file_handler.setFormatter(DEFAULT_FORMATTER)
 
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(INFO)
+    console_handler.setLevel(LoggingLevel.INFO)
     console_handler.setFormatter(CONSOLE_FORMATTER)
 
     default_logger.addHandler(file_handler)

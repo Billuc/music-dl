@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from musicdl.exec.classes import ConfigOptions
+from musicdl.exec.data import ConfigOptions
 
 
 def from_dict(dict: Dict[str, Any]) -> ConfigOptions:

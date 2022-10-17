@@ -2,7 +2,8 @@ import json
 from typing import Any, Dict
 
 from musicdl.common import MusicDLException, is_ffmpeg_installed, CONFIG_PATH
-from musicdl.exec.classes import QueryOptions, QueryExecuter
+from musicdl.exec.classes import QueryExecuter
+from musicdl.exec.data import QueryOptions
 from musicdl.exec.extensions import has_special_args
 
 

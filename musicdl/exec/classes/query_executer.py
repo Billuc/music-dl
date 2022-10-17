@@ -3,7 +3,7 @@ from logging import Logger
 
 from musicdl.commands import BaseCommandExecuter
 
-from musicdl.exec.classes import QueryOptions
+from musicdl.exec.data import QueryOptions
 from musicdl.exec.extensions import to_command_options
 
 

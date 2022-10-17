@@ -1,8 +1,5 @@
 from argparse import ArgumentParser
-import logging
-from logging import Logger
 from kink import di
-from rich.console import Console
 
 from musicdl.commands import init_di as add_commands
 from musicdl.common import init_di as add_common

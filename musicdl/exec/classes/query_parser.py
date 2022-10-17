@@ -15,7 +15,7 @@ from musicdl.common import (
     MusicDLException,
     LoggingLevel
 )
-from . import QueryOptions
+from musicdl.exec.data import QueryOptions
 from musicdl.exec.extensions import from_namespace, has_special_args
 
 
@@ -78,7 +78,7 @@ class QueryParser:
             raise MusicDLException("No arguments parsed")
 
         if (
-            opts.operation is None or opts.query is None
+            opts.operation is None or opts.query is None or opts.query == []
         ) and has_special_args(opts) is False:
             self._logger.error("Error in query : Invalid arguments !")
             raise MusicDLException("Invalid arguments")

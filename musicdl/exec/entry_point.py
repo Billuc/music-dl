@@ -2,7 +2,8 @@ import cProfile
 import pstats
 from musicdl.common.exceptions.MusicDLException import MusicDLException
 from .utils import init_app, exec_command
-from .classes import QueryParser, QueryOptions
+from .classes import QueryParser
+from .data import QueryOptions
 
 
 def entry_point():
