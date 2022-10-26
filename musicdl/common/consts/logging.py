@@ -16,7 +16,7 @@ class LoggingLevel(Enum):
     
     @classmethod
     def level_names(cls) -> List[str]:
-        return cls.__members__.keys()
+        return list(cls.__members__.keys())
 
 # logging formatters
 

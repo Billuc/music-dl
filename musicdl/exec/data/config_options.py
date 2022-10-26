@@ -20,7 +20,7 @@ class ConfigOptions:
     ffmpeg_args: str
     format: str
     save_file: str
-    m3u: None
+    m3u: str
     output: str
     overwrite: str
     client_id: str

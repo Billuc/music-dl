@@ -10,7 +10,7 @@ class TestQueryExecuter:
     def options(self):
         return QueryOptions(
             "download",
-            "test_uri",
+            ["test_uri"],
             [],
             [],
             False, 

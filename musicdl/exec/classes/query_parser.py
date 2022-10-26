@@ -16,7 +16,7 @@ from musicdl.common import (
     LoggingLevel
 )
 from musicdl.exec.data import QueryOptions
-from musicdl.exec.extensions import from_namespace, has_special_args
+from musicdl.exec.extensions import generate_config_options, has_special_args
 
 
 @inject
@@ -59,7 +59,7 @@ class QueryParser:
         self._logger.debug("Parsing...")
 
         arguments = self._parser.parse_args()
-        options = from_namespace(arguments)
+        options = generate_config_options(arguments.__dict__)
         self._check_options(options)
 
         self._logger.debug("Parsed !")
