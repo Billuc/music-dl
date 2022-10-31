@@ -5,7 +5,7 @@ from typing import List
 from musicdl.common import LoggingLevel
 
 
-@dataclass(init=False)
+@dataclass
 class DownloaderSettings:
     """
     CommandOptions class. Contains all the options necessary to execute commands.
