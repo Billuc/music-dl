@@ -1,5 +1,5 @@
 import pytest
-from musicdl.commands.classes.AllowedOperations import AllowedOperations
+from musicdl.commands.data import AllowedOperations
 from musicdl.common.consts.logging import DEFAULT_LOGGING_LEVEL, LoggingLevel
 from musicdl.exec.data.query_options import QueryOptions
 

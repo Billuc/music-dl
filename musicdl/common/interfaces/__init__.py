@@ -1,2 +1,3 @@
-from .BaseResponsibilityChain import BaseResponsibilityChain, BaseResponsibilityChainLink
+from .base_responsibility_chain import BaseResponsibilityChain, BaseResponsibilityChainLink
 from .base_process_executor import BaseProcessExecutor
+from .base_ffmpeg_helper import BaseFfmpegHelper

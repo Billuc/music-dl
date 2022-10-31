@@ -4,7 +4,7 @@ from typing import List
 
 from musicdl.common import LoggingLevel
 
-from .AllowedOperations import AllowedOperations
+from .allowed_operations import AllowedOperations
 
 @dataclass
 class CommandOptions:

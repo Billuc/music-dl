@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Dict, Any, List, Optional
 
-from .SongList import SongList
+from .song_list import SongList
 
 
 @dataclass()

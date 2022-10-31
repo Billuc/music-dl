@@ -2,7 +2,7 @@ from logging import Logger
 from kink import inject
 
 from musicdl.common import BaseResponsibilityChainLink
-from musicdl.commands.classes import CommandOptions, AllowedOperations
+from musicdl.commands.data import CommandOptions, AllowedOperations
 
 
 @inject

@@ -98,6 +98,7 @@ class Downloader:
 
         return results
 
+
     async def pool_download(self, song: Song) -> Tuple[Song, Optional[Path]]:
         """
         Run asynchronous task in a pool to make sure that all processes.

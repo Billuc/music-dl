@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from .SongList import SongList
-from .Song import Song
+from .song_list import SongList
+from .song import Song
 from spotdl.utils.spotify import SpotifyClient
 
 

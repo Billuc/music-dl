@@ -13,7 +13,7 @@ class QueryOptions:
     audio_providers: List[str]
     lyrics_providers: List[str]
     no_config: bool
-    search_query: bool
+    search_query: str
     filter_results: bool
     ffmpeg: str
     threads: int

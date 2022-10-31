@@ -1,6 +1,6 @@
 from musicdl.common import BaseResponsibilityChain
 
-from musicdl.commands.classes import CommandOptions
+from musicdl.commands.data import CommandOptions
 
 
 class BaseCommandExecuter(BaseResponsibilityChain[CommandOptions]):

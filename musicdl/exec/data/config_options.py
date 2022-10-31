@@ -16,7 +16,7 @@ class ConfigOptions:
     audio_providers: List[str]
     lyrics_providers: List[str]
     ffmpeg: str
-    bitrate: bool
+    bitrate: str
     ffmpeg_args: str
     format: str
     save_file: str

@@ -1,2 +1,3 @@
-from .ResponsibilityChain import ResponsibilityChain, ResponsibilityChainFactory
+from .responsibility_chain import ResponsibilityChain, ResponsibilityChainFactory
 from .process_executor import ProcessExecutor
+from .ffmpeg_helper import FfmpegHelper

@@ -4,6 +4,7 @@ from musicdl.commands import CommandOptions, AllowedOperations
 from musicdl.common import LoggingLevel
 from musicdl.common.consts.logging import DEFAULT_LOGGING_LEVEL
 from musicdl.exec.data import QueryOptions
+from musicdl.exec.data.exec_options import ExecOptions
 
 
 def generate_query_options(args_dict: Dict[str, Any]) -> QueryOptions:
@@ -66,58 +67,43 @@ def generate_query_options(args_dict: Dict[str, Any]) -> QueryOptions:
     return options
 
 
-def to_command_options(opts: QueryOptions) -> CommandOptions:
-    operation = _to_allowed_operation(opts)
-    audio_providers = opts.audio_providers
-    bitrate = opts.bitrate
-    ffmpeg = opts.ffmpeg
-    ffmpeg_args = opts.ffmpeg_args
-    filter_results = opts.filter_results
-    format = opts.format
-    headless = opts.headless
-    log_level = (
-        LoggingLevel[opts.log_level]
-        if opts.log_level in LoggingLevel.level_names()
-        else DEFAULT_LOGGING_LEVEL
+def to_exec_options(opts: QueryOptions) -> ExecOptions:
+    return ExecOptions(
+        opts.operation, 
+        opts.query, 
+        opts.audio_providers, 
+        opts.lyrics_providers, 
+        opts.no_config, 
+        opts.search_query, 
+        opts.filter_results, 
+        opts.ffmpeg, 
+        opts.threads, 
+        opts.bitrate, 
+        opts.ffmpeg_args,
+        opts.format, 
+        opts.save_file, 
+        opts.output, 
+        opts.m3u, 
+        opts.overwrite, 
+        opts.restrict, 
+        opts.print_errors, 
+        opts.sponsor_block, 
+        opts.log_level, 
+        opts.simple_tui, 
+        opts.headless, 
+        opts.download_ffmpeg, 
+        opts.generate_config, 
+        opts.check_for_updates, 
+        opts.profile, 
+        False,
+        None, 
+        None, 
+        None, 
+        None, 
+        None,
+        None, 
+        None 
     )
-    lyrics_providers = opts.lyrics_providers
-    m3u = opts.m3u
-    output = opts.output
-    overwrite = opts.overwrite
-    print_errors = opts.print_errors
-    query = opts.query if opts.query is not None else []
-    restrict = opts.restrict
-    save_file = opts.save_file
-    search_query = opts.search_query
-    simple_tui = opts.simple_tui
-    sponsor_block = opts.sponsor_block
-    threads = opts.threads
-
-    command_opts = CommandOptions(
-        operation,
-        query,
-        audio_providers,
-        lyrics_providers,
-        search_query,
-        filter_results,
-        ffmpeg,
-        threads,
-        bitrate,
-        ffmpeg_args,
-        format,
-        save_file,
-        output,
-        m3u,
-        overwrite,
-        restrict,
-        print_errors,
-        sponsor_block,
-        log_level,
-        simple_tui,
-        headless,
-    )
-
-    return command_opts
 
 
 def has_special_args(opts: QueryOptions) -> bool:
@@ -127,22 +113,4 @@ def has_special_args(opts: QueryOptions) -> bool:
         or opts.check_for_updates is True
     )
 
-
-def _to_allowed_operation(options: QueryOptions) -> AllowedOperations:
-    if options.check_for_updates:
-        return AllowedOperations.CHECK_FOR_UPDATES
-    elif options.download_ffmpeg:
-        return AllowedOperations.DOWNLOAD_FFMPEG
-    elif options.generate_config:
-        return AllowedOperations.GENERATE_CONFIG
-    else:
-        if options.operation == "download":
-            return AllowedOperations.DOWNLOAD
-        elif options.operation == "save":
-            return AllowedOperations.SAVE
-        elif options.operation == "sync":
-            return AllowedOperations.SYNC
-        elif options.operation == "web":
-            return AllowedOperations.WEB
-
-    return AllowedOperations.UNKNOWN
+    

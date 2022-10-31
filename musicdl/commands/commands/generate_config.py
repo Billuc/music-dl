@@ -4,7 +4,7 @@ from logging import Logger
 
 from musicdl.common import BaseResponsibilityChainLink
 
-from musicdl.commands.classes import CommandOptions, AllowedOperations
+from musicdl.commands.data import CommandOptions, AllowedOperations
 from musicdl.common.consts import CONFIG_PATH
 from musicdl.common.consts.config import DEFAULT_CONFIG
 

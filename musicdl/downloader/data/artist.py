@@ -3,9 +3,9 @@ from typing import Any, Dict, List, Set
 
 from slugify import slugify
 
-from .SongList import SongList
-from .Song import Song
-from .Album import Album
+from .song_list import SongList
+from .song import Song
+from .album import Album
 from spotdl.utils.spotify import SpotifyClient
 
 

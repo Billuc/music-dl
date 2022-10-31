@@ -10,7 +10,7 @@ from typing import List, Optional
 from pathlib import Path
 
 from musicdl.commands.interfaces import BaseCommand
-from musicdl.commands.classes import CommandOptions
+from musicdl.commands.data import CommandOptions
 from musicdl.downloader import BaseDownloader
 
 from musicdl.downloader.downloader_old import Downloader
@@ -29,6 +29,7 @@ class DownloadCommand(BaseCommand):
 
 
     def exec(self, options: CommandOptions) -> None:
+        self._downloader.download_multiple_songs()
         # parse query to get songs or song searches
         # download musics accordingly
         # if m3u, create a m3u file
@@ -60,7 +61,7 @@ def download(
     results = downloader.download_multiple_songs(songs)
 
     if m3u_file:
-        song_list = [song for song, _ in results]
+        song_list = [song for (song, _) in results]
         create_m3u_file(
             m3u_file, song_list, downloader.output, downloader.output_format, False
         )

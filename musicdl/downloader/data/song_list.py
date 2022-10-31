@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from .Song import Song
+from .song import Song
 
 
 @dataclass(frozen=True)

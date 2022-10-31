@@ -1,4 +1,4 @@
-from typing import TypeVar, List
+from typing import Generic, TypeVar, List
 
 from musicdl.common.interfaces import BaseResponsibilityChain, BaseResponsibilityChainLink
 
@@ -24,7 +24,7 @@ class ResponsibilityChain(BaseResponsibilityChain[T]):
         return False
 
 
-class ResponsibilityChainFactory():
+class ResponsibilityChainFactory(Generic[T]):
     _chain: BaseResponsibilityChain[T]
 
     def __init__(self):

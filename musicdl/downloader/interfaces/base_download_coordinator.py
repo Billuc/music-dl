@@ -2,7 +2,8 @@ import abc
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from musicdl.downloader.classes.Song import Song
+from musicdl.downloader.data.song import Song
+from musicdl.downloader.data.downloader_settings import DownloaderSettings
 
 
 class BaseDownloadCoordinator(metaclass=abc.ABCMeta):
@@ -14,32 +15,9 @@ class BaseDownloadCoordinator(metaclass=abc.ABCMeta):
                 callable(subclass.download_multiple_songs)  or 
                 NotImplemented)
 
-    @abc.abstractmethod
-    def download_song(self, song: Song) -> Tuple[Song, Optional[Path]]:
-        """
-        Download a single song.
-
-        ### Arguments
-        - song: The song to download.
-
-        ### Returns
-        - tuple with the song and the path to the downloaded file if successful.
-        """
-
-        raise NotImplementedError
 
     @abc.abstractmethod
-    def download_multiple_songs(
-        self, songs: List[Song]
+    def download(
+        self, options: DownloaderSettings
     ) -> List[Tuple[Song, Optional[Path]]]:
-        """
-        Download multiple songs to the temp directory.
-
-        ### Arguments
-        - songs: The songs to download.
-
-        ### Returns
-        - list of tuples with the song and the path to the downloaded file if successful.
-        """
-
         raise NotImplementedError

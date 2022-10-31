@@ -27,7 +27,7 @@ from musicdl.downloader.progress_handler_old import NAME_TO_LEVEL, ProgressHandl
 from musicdl.utils.config import get_errors_path, get_temp_path
 
 
-from musicdl.downloader.classes import Song, DownloaderSettings
+from musicdl.downloader.data import Song, DownloaderSettings
 from musicdl.downloader.interfaces import (
     BaseAudioProvider, 
     BaseLyricsProvider, 
@@ -78,22 +78,9 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         self._audio_converter = audio_converter
 
 
-    def update_settings(self, settings: DownloaderSettings) -> None:
-        self._audio_provider.update_settings(settings)
-        self._lyrics_provider.update_settings(settings)
-        self._downloader.update_settings(settings)
-        self._progress_logger.update_settings(settings)
-        self._parallel_executor.configure(settings.threads)
-        self._audio_converter.configure(settings)
-        self._initialized = True
-
-
-    def download_song(self, url: str) -> Tuple[Song, Optional[Path]]:
-        results = self.download_multiple_songs([url])
-        return results[0]
-
-
-    def download_multiple_songs(self, query: List[str]) -> List[Tuple[Song, Optional[Path]]]:
+    def download(self, options: DownloaderSettings) -> List[Tuple[Song, Optional[Path]]]:
+        self._update_settings(options)
+        
         self.progress_handler.set_song_count(len(query))
         results = list(self._parallel_executor.execute_function(self._download, query, return_exceptions=True))
 
@@ -106,6 +93,17 @@ class DownloadCoordinator(BaseDownloadCoordinator):
                 json.dump([song.json for song, _ in results], save_file, indent=4)
 
         return results
+
+
+    def _update_settings(self, settings: DownloaderSettings) -> None:
+        self._audio_provider.update_settings(settings)
+        self._lyrics_provider.update_settings(settings)
+        self._downloader.update_settings(settings)
+        self._progress_logger.update_settings(settings)
+        self._parallel_executor.configure(settings.threads)
+        self._audio_converter.configure(settings)
+        self._initialized = True
+
 
     def _download(self, url: str) -> Tuple[Song, Optional[Path]]:
         (song, youtube_url) = self._audio_provider.search(url)

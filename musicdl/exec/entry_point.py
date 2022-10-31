@@ -1,10 +1,15 @@
 import cProfile
 import pstats
+
 from musicdl.common.exceptions.MusicDLException import MusicDLException
-from .utils import init_app, exec_command
-from .classes import QueryParser
+
+from .utils import init_app
+from .classes import QueryParser, QueryExecuter
 from .data import QueryOptions
 
+
+parser = QueryParser()
+executer = QueryExecuter()
 
 def entry_point():
     """
@@ -12,7 +17,6 @@ def entry_point():
     """
 
     init_app()
-    parser = QueryParser()
 
     try:
         options = parser.parse_arguments()
@@ -23,12 +27,12 @@ def entry_point():
     if options.profile:
         _execute_with_profile(options)
     else:
-        exec_command(options)
+        executer.exec(options)
 
 
 def _execute_with_profile(options: QueryOptions) -> None:
     with cProfile.Profile() as profile:
-        exec_command(options)
+        executer.exec(options)
 
     # Get profile's stats. They can be visualized using snakeviz
     stats = pstats.Stats(profile)
