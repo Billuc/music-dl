@@ -80,8 +80,10 @@ class DownloadCoordinator(BaseDownloadCoordinator):
 
     def download(self, options: DownloaderSettings) -> List[Tuple[Song, Optional[Path]]]:
         self._update_settings(options)
+
+        results = self._search_and_download(options.query)
         
-        self.progress_handler.set_song_count(len(query))
+        self.progress_handler.set_song_count(len(query)) # does not work because there can be a playlist
         results = list(self._parallel_executor.execute_function(self._download, query, return_exceptions=True))
 
         if self.print_errors:
@@ -105,8 +107,21 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         self._initialized = True
 
 
-    def _download(self, url: str) -> Tuple[Song, Optional[Path]]:
-        (song, youtube_url) = self._audio_provider.search(url)
+    def _search_and_download(self, query: List[str]) -> List[Tuple[Song, Optional[Path]]]:
+        results = list()
+
+        for (query_item in query):
+            songs = self._metadata_provider.search(query_item)
+            self._progress_logger.set_count(len(songs))
+            
+            partial_results = list(self._parallel_executor.execute_function(self._download, songs, return_exceptions=True))
+            results.concat(partial_results)
+
+        return results
+
+
+    def _download(self, song: Song) -> Tuple[Song, Optional[Path]]:
+        youtube_url = self._audio_provider.exec(song)
         download_info = self._downloader.download_song(youtube_url)
         self._audio_converter.convert() # TODO
         # sponsor block
