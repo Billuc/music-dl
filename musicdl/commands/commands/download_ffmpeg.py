@@ -27,6 +27,7 @@ class DownloadFFMPEGCommand(BaseResponsibilityChainLink[CommandOptions]):
             )
 
             if overwrite_ffmpeg.lower() != "y":
+                self._logger.info("Exiting...")
                 return True
         
         self._download_and_check_ffmpeg()
