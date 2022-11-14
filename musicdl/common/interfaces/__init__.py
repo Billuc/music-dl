@@ -1,3 +1,4 @@
 from .base_responsibility_chain import BaseResponsibilityChain, BaseResponsibilityChainLink
 from .base_process_executor import BaseProcessExecutor
 from .base_ffmpeg_helper import BaseFfmpegHelper
+from .base_pipeline import BasePipeline, BasePipelineMiddleware

@@ -81,8 +81,8 @@ class DownloadCoordinator(BaseDownloadCoordinator):
     def download(self, options: DownloaderSettings) -> List[Tuple[Song, Optional[Path]]]:
         self._update_settings(options)
         
-        self.progress_handler.set_song_count(len(query))
-        results = list(self._parallel_executor.execute_function(self._download, query, return_exceptions=True))
+        self.progress_handler.set_song_count(len(options.query))
+        results = list(self._parallel_executor.execute_function(self._download, options.query, return_exceptions=True))
 
         if self.print_errors:
             for error in self.errors:
