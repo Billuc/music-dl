@@ -110,7 +110,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
     def _search_and_download(self, query: List[str]) -> List[Tuple[Song, Optional[Path]]]:
         results = list()
 
-        for (query_item in query):
+        for query_item in query:
             songs = self._metadata_provider.search(query_item)
             self._progress_logger.set_count(len(songs))
             

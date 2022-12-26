@@ -8,13 +8,24 @@ from pytube import YouTube as PyTube, Search
 from rapidfuzz import fuzz
 from slugify import slugify
 
+from musicdl.common import BasePipelineMiddleware
+
 from spotdl.utils.formatter import create_song_title, create_search_query
 from spotdl.providers.audio.base import AudioProvider
 from spotdl.types import Song
 
 
-class YoutubeAudioProvider(BaseResponsibilityChainLink[Song]):
-    def exec(self, options: Song) -> bool:
+class YoutubeAudioProvider(BasePipelineMiddleware[Song, Dict]):
+    def exec(self, query: Song, next: Callable[[Song], Dict]) -> Dict:
+        if (notSpotify):
+            if (next is None):
+                return SongList("", "", [], [])
+
+            return next(query)
+
+        # build SongList
+        return None
+
 
 class YouTube(AudioProvider):
     """

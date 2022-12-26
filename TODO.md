@@ -1,5 +1,14 @@
 # TODO
 
+- Finir les metadata provider
+- Completer le download coordinator
+- Finir les audio providers
+- Faire les lyrics providers
+
+
+
+
+
 - maybe enlever les default dans le parser
 - Create data classes in downloader
 - remove from_url and move them to a SpotifyProvider or smth
