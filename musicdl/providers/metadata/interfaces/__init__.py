@@ -1,1 +1,1 @@
-from .base_metadata_provider import BaseAudioProvider
+from .base_metadata_provider import BaseMetadataProvider

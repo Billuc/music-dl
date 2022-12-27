@@ -1,0 +1,3 @@
+from .spotify_album_metadata_provider import SpotifyAlbumMetadataProvider
+from .spotify_playlist_metadata_provider import SpotifyPlaylistMetadataProvider
+from .spotify_track_metadata_provider import SpotifyTrackMetadataProvider

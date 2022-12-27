@@ -29,7 +29,7 @@ class Pipeline(BasePipeline[T, U]):
 
     def _gen_next(self, index: int) -> Callable[[T], U]:
         if index >= len(self._middlewares) - 1:
-            return None
+            return lambda t: None
 
         return lambda t: self._middlewares[index + 1].exec(t, self._gen_next(index + 1))
         

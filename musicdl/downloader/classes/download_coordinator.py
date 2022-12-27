@@ -12,6 +12,7 @@ import traceback
 
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Type
+from kink import inject
 
 from yt_dlp.postprocessor.sponsorblock import SponsorBlockPP
 from yt_dlp.postprocessor.modify_chapters import ModifyChaptersPP
@@ -41,7 +42,7 @@ from musicdl.common import MusicDLException
 
 
 
-
+@inject
 class DownloadCoordinator(BaseDownloadCoordinator):
     """
     Downloader class, this is where all the downloading pre/post processing happens etc.
