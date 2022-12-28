@@ -32,5 +32,11 @@ class CommandOptions:
     sponsor_block: bool
     log_level: LoggingLevel
     simple_tui: bool
+    
+    client_id: str
+    client_secret: str
+    cache_path: str
+    user_auth: bool
+    no_cache: bool
     headless: bool
 

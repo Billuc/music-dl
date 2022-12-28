@@ -4,6 +4,7 @@ from spotipy import Spotify
 from kink import inject
 
 from musicdl.common import BasePipelineMiddleware, MusicDLException
+from musicdl.common.classes import SpotifyClientProvider
 from musicdl.common.data import SongList, Song, Album
 from musicdl.providers.metadata.utils import create_song
 
@@ -14,9 +15,9 @@ class SpotifyAlbumMetadataProvider(BasePipelineMiddleware[str, SongList]):
     
     def __init__(
         self,
-        spotifyClient: Spotify 
+        spotify_client_provider: SpotifyClientProvider
     ):
-        self._spotifyClient = spotifyClient
+        self._spotifyClient = spotify_client_provider.get_client()
         
     
     def exec(self, query: str, next: Callable[[str], SongList]) -> SongList:

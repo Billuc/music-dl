@@ -1,7 +1,7 @@
 from kink import inject
 from logging import Logger
 
-from musicdl.common import BaseFfmpegHelper, MusicDLException
+from musicdl.common import MusicDLException
 from musicdl.commands import BaseCommandExecuter, CommandOptions
 
 from musicdl.exec.data import QueryOptions
@@ -25,7 +25,7 @@ class QueryExecuter:
         logger: Logger, 
         configLoader: BaseConfigLoader,
         queryOptionsChecker: BaseQueryOptionsChecker,
-        commandExecuter: BaseCommandExecuter
+        commandExecuter: BaseCommandExecuter,
     ):
         self._logger = logger
         self._configLoader = configLoader
@@ -51,19 +51,17 @@ class QueryExecuter:
 
     
     def _build_command_options(self, queryOpts: QueryOptions) -> CommandOptions:
-        execOpts = None
-
         if (has_special_args(queryOpts)):
             execOpts = to_exec_options(queryOpts)
+            return to_command_options(execOpts)
+
+        configOpts = self._configLoader.load()
+
+        if (queryOpts.no_config or not configOpts.load_config):
+            execOpts = to_exec_options(queryOpts)
+            return to_command_options(execOpts)
         else:
-            configOpts = self._configLoader.load()
-
-            if (queryOpts.no_config or not configOpts.load_config):
-                execOpts = to_exec_options(queryOpts)
-            else:
-                execOpts = generate_exec_options(queryOpts, configOpts)
-
-        commandOpts = to_command_options(execOpts)
-        return commandOpts
-
-
+            execOpts = generate_exec_options(queryOpts, configOpts)
+            return to_command_options(execOpts)
+       
+        

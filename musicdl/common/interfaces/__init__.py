@@ -2,3 +2,4 @@ from .base_responsibility_chain import BaseResponsibilityChain, BaseResponsibili
 from .base_process_executor import BaseProcessExecutor
 from .base_ffmpeg_helper import BaseFfmpegHelper
 from .base_pipeline import BasePipeline, BasePipelineMiddleware
+from .base_spotify_client_provider import BaseSpotifyClientProvider

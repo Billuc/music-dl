@@ -7,7 +7,6 @@ from musicdl.providers.metadata.classes import SpotifyTrackMetadataProvider, Spo
 from musicdl.providers.metadata.interfaces import BaseMetadataProvider
 
 def init_di():
-    di[Spotify] = Spotify() # TODO
     di[BaseMetadataProvider] =  lambda di: (
         PipelineFactory[str, SongList]()
             .add(di[SpotifyTrackMetadataProvider])

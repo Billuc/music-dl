@@ -38,7 +38,7 @@ from musicdl.downloader.interfaces import (
     BaseAudioConverter,
     BaseParallelExecutor
 )
-from musicdl.common import MusicDLException
+from musicdl.common import MusicDLException, BaseSpotifyClientProvider
 
 
 
@@ -50,6 +50,8 @@ class DownloadCoordinator(BaseDownloadCoordinator):
     """
 
     _initialized: bool
+
+    _spotify_client_provider: BaseSpotifyClientProvider
     
     _audio_provider: BaseAudioProvider
     _lyrics_provider: BaseLyricsProvider
@@ -63,6 +65,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
 
     def __init__(
         self,
+        spotify_client_provider: BaseSpotifyClientProvider,
         audio_provider: BaseAudioProvider,
         lyrics_provider: BaseLyricsProvider,
         downloader: BaseDownloader,
@@ -71,6 +74,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         audio_converter: BaseAudioConverter
     ):
         self._initialized = False
+        self._spotify_client_provider = spotify_client_provider
         self._audio_provider = audio_provider
         self._lyrics_provider = lyrics_provider
         self._downloader = downloader
@@ -99,6 +103,14 @@ class DownloadCoordinator(BaseDownloadCoordinator):
 
 
     def _update_settings(self, settings: DownloaderSettings) -> None:
+        self._spotify_client_provider.init(
+            settings.client_id,
+            settings.client_secret,
+            settings.user_auth,
+            settings.cache_path,
+            settings.no_cache,
+            not settings.headless
+        )
         self._audio_provider.update_settings(settings)
         self._lyrics_provider.update_settings(settings)
         self._downloader.update_settings(settings)

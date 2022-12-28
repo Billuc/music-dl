@@ -62,7 +62,6 @@ def to_command_options(opts: ExecOptions) -> CommandOptions:
     ffmpeg_args = opts.ffmpeg_args
     filter_results = opts.filter_results
     format = opts.format
-    headless = opts.headless
     log_level = (
         LoggingLevel[opts.log_level]
         if opts.log_level in LoggingLevel.level_names()
@@ -80,6 +79,13 @@ def to_command_options(opts: ExecOptions) -> CommandOptions:
     simple_tui = opts.simple_tui
     sponsor_block = opts.sponsor_block
     threads = opts.threads
+
+    client_id = opts.client_id
+    client_secret = opts.client_secret
+    cache_path = opts.cache_path
+    user_auth = opts.user_auth
+    no_cache = opts.no_cache
+    headless = opts.headless
 
     command_opts = CommandOptions(
         operation,
@@ -102,6 +108,11 @@ def to_command_options(opts: ExecOptions) -> CommandOptions:
         sponsor_block,
         log_level,
         simple_tui,
+        client_id,
+        client_secret,
+        cache_path,
+        user_auth,
+        no_cache,
         headless,
     )
 

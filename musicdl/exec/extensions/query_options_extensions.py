@@ -1,10 +1,6 @@
 from typing import Any, Dict
 
-from musicdl.commands import CommandOptions, AllowedOperations
-from musicdl.common import LoggingLevel
-from musicdl.common.consts.logging import DEFAULT_LOGGING_LEVEL
-from musicdl.exec.data import QueryOptions
-from musicdl.exec.data.exec_options import ExecOptions
+from musicdl.exec.data import QueryOptions, ExecOptions
 
 
 def generate_query_options(args_dict: Dict[str, Any]) -> QueryOptions:

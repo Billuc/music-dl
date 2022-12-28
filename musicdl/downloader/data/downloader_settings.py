@@ -8,7 +8,7 @@ from musicdl.common import LoggingLevel
 @dataclass
 class DownloaderSettings:
     """
-    CommandOptions class. Contains all the options necessary to execute commands.
+    DownloaderSettings class. Contains all the options necessary to execute commands.
     """
 
     query: List[str]
@@ -28,4 +28,10 @@ class DownloaderSettings:
     sponsor_block: bool
     log_level: LoggingLevel
     simple_tui: bool
+    
+    client_id: str
+    client_secret: str
+    cache_path: str
+    user_auth: bool
+    no_cache: bool
     headless: bool

@@ -21,6 +21,11 @@ def build_download_settings(commandOpts: CommandOptions) -> DownloaderSettings:
         commandOpts.sponsor_block,
         commandOpts.log_level,
         commandOpts.simple_tui,
+        commandOpts.client_id,
+        commandOpts.client_secret,
+        commandOpts.cache_path,
+        commandOpts.user_auth,
+        commandOpts.no_cache,
         commandOpts.headless
     )
 
