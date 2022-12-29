@@ -1,8 +1,9 @@
+from typing import Dict
+
 from musicdl.common import BasePipeline
+from musicdl.providers.audio.data import DownloadSongCommand
 
-from musicdl.downloader import Song
 
-
-class BaseAudioProvider(BasePipeline[Song, Dict]):
+class BaseAudioProvider(BasePipeline[DownloadSongCommand, Dict]):
     def __init__(self) -> None:
         super().__init__()

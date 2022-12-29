@@ -86,6 +86,8 @@ def to_command_options(opts: ExecOptions) -> CommandOptions:
     user_auth = opts.user_auth
     no_cache = opts.no_cache
     headless = opts.headless
+    
+    cookie_file = opts.cookie_file
 
     command_opts = CommandOptions(
         operation,
@@ -114,6 +116,7 @@ def to_command_options(opts: ExecOptions) -> CommandOptions:
         user_auth,
         no_cache,
         headless,
+        cookie_file,
     )
 
     return command_opts

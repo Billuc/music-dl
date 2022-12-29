@@ -1,12 +1,14 @@
 # TODO
 
-- Finir les metadata provider
 - Completer le download coordinator
 - Finir les audio providers
 - Faire les lyrics providers
+- Ajouter YT et YTM aux metadata providers
+- Ajouter AmazonMusic aux metadata providers
 
 
 
+- Better exceptions
 
 
 - maybe enlever les default dans le parser

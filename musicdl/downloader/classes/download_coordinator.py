@@ -17,6 +17,8 @@ from kink import inject
 from yt_dlp.postprocessor.sponsorblock import SponsorBlockPP
 from yt_dlp.postprocessor.modify_chapters import ModifyChaptersPP
 
+from musicdl.providers.metadata import BaseMetadataProvider
+
 from musicdl.utils.ffmpeg import FFmpegError, convert, get_ffmpeg_path
 from musicdl.utils.metadata import embed_metadata, MetadataError
 from musicdl.utils.formatter import create_file_name, restrict_filename
@@ -38,7 +40,7 @@ from musicdl.downloader.interfaces import (
     BaseAudioConverter,
     BaseParallelExecutor
 )
-from musicdl.common import MusicDLException, BaseSpotifyClientProvider
+from musicdl.common import MusicDLException, BaseSpotifyClientProvider, BaseYoutubeDLClientProvider
 
 
 
@@ -52,6 +54,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
     _initialized: bool
 
     _spotify_client_provider: BaseSpotifyClientProvider
+    _youtube_dl_client_provider: BaseYoutubeDLClientProvider
     
     _audio_provider: BaseAudioProvider
     _lyrics_provider: BaseLyricsProvider
@@ -66,6 +69,8 @@ class DownloadCoordinator(BaseDownloadCoordinator):
     def __init__(
         self,
         spotify_client_provider: BaseSpotifyClientProvider,
+        youtube_dl_client_provider: BaseYoutubeDLClientProvider,
+        metadata_provider: BaseMetadataProvider,
         audio_provider: BaseAudioProvider,
         lyrics_provider: BaseLyricsProvider,
         downloader: BaseDownloader,
@@ -75,6 +80,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
     ):
         self._initialized = False
         self._spotify_client_provider = spotify_client_provider
+        self._youtube_dl_client_provider = youtube_dl_client_provider
         self._audio_provider = audio_provider
         self._lyrics_provider = lyrics_provider
         self._downloader = downloader
@@ -88,9 +94,6 @@ class DownloadCoordinator(BaseDownloadCoordinator):
 
         results = self._search_and_download(options.query)
         
-        self.progress_handler.set_song_count(len(query)) # does not work because there can be a playlist
-        results = list(self._parallel_executor.execute_function(self._download, query, return_exceptions=True))
-
         if self.print_errors:
             for error in self.errors:
                 self.progress_handler.error(error)
@@ -110,6 +113,10 @@ class DownloadCoordinator(BaseDownloadCoordinator):
             settings.cache_path,
             settings.no_cache,
             not settings.headless
+        )
+        self._youtube_dl_client_provider.init(
+            settings.output,
+            settings.cookie_file,
         )
         self._audio_provider.update_settings(settings)
         self._lyrics_provider.update_settings(settings)

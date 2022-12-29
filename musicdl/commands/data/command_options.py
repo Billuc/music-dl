@@ -39,4 +39,6 @@ class CommandOptions:
     user_auth: bool
     no_cache: bool
     headless: bool
+    
+    cookie_file: str
 

@@ -2,181 +2,161 @@
 Youtube module for downloading and searching songs.
 """
 
-from typing import Any, Dict, List, Optional
-
+from typing import Any, Dict, List, Optional, Tuple
+from kink import inject
 from pytube import YouTube as PyTube, Search
 from rapidfuzz import fuzz
 from slugify import slugify
 
-from musicdl.common import BasePipelineMiddleware
+from typing import Dict, Callable
+from yt_dlp import YoutubeDL
 
-from spotdl.utils.formatter import create_song_title, create_search_query
-from spotdl.providers.audio.base import AudioProvider
-from spotdl.types import Song
+from musicdl.common import BasePipelineMiddleware, BaseFormatHelper, BaseYoutubeDLClientProvider, MusicDLException, Song
+from musicdl.providers.audio.data import DownloadSongCommand
 
 
-class YoutubeAudioProvider(BasePipelineMiddleware[Song, Dict]):
-    def exec(self, query: Song, next: Callable[[Song], Dict]) -> Dict:
-        if (notSpotify):
-            if (next is None):
-                return SongList("", "", [], [])
-
+@inject
+class YoutubeAudioProvider(BasePipelineMiddleware[DownloadSongCommand, Dict]):
+    _format_helper: BaseFormatHelper
+    _youtube_dl_client: YoutubeDL
+    
+    
+    def __init__(
+        self, 
+        format_helper: BaseFormatHelper,
+        ytdl_client_provider: BaseYoutubeDLClientProvider
+    ):
+        self._format_helper = format_helper
+        self._youtube_dl_client = ytdl_client_provider.get_client()
+        
+        
+    def exec(self, query: DownloadSongCommand, next: Callable[[DownloadSongCommand], Dict]) -> Dict:
+        download_url = self._get_download_url(query.song, query.search_query, query.filter_results)
+        
+        if download_url is None:
             return next(query)
-
-        # build SongList
-        return None
-
-
-class YouTube(AudioProvider):
-    """
-    YouTube audio provider class
-    """
-
-    def search(self, song: Song) -> Optional[str]:
-        """
-        Search for a video on YouTube.
-
-        ### Arguments
-        - song: The song to search for.
-
-        ### Returns
-        - The url of the best match or None if no match was found.
-        """
-
-        if self.search_query:
-            search_query = create_search_query(
-                song, self.search_query, False, None, True
+        
+        return self._get_download_metadata(download_url, True)
+    
+    
+    def _get_download_url(self, song: Song, search_query: str, filter_results: bool):
+        if search_query is None and song.isrc is not None:
+            isrc_result = self._get_isrc_result(song)
+            if isrc_result is not None:
+                return isrc_result
+            
+        if search_query is not None:
+            search = self._format_helper.create_search_query(
+                song, search_query, False, None, True
             )
         else:
-            # if isrc is not None then we try to find song with it
-            if song.isrc:
-                isrc_results = self.get_results(song.isrc)
-
-                if isrc_results and len(isrc_results) == 1:
-                    isrc_result = isrc_results[0]
-
-                    if isrc_result and isrc_result.watch_url is not None:
-                        return isrc_result.watch_url
-
-            search_query = create_song_title(song.name, song.artists).lower()
-
-        # Query YTM by songs only first, this way if we get correct result on the first try
-        # we don't have to make another request to ytmusic api that could result in us
-        # getting rate limited sooner
-        results = self.get_results(search_query)
-
+            search = self._format_helper.create_song_title(song.name, song.artists).lower()
+            
+        results = Search(search).results
+        
         if results is None:
             return None
+        
+        return self._get_best_result(results, song, search, filter_results)
+        
+        
+    def _get_isrc_result(self, song: Song) -> Optional[str]:
+        isrc_results: Optional[List[PyTube]] = Search(song.isrc).results
 
-        if self.filter_results:
-            ordered_results = {results[0].watch_url: 100}
-        else:
-            # Order results
-            ordered_results = self.order_results(results, song)
-
-        # No matches found
-        if len(ordered_results) == 0:
+        if isrc_results is None or len(isrc_results) != 1:
             return None
-
-        result_items = list(ordered_results.items())
-
-        # Sort results by highest score
-        sorted_results = sorted(result_items, key=lambda x: x[1], reverse=True)
-
-        # Return the first result
-        return sorted_results[0][0]
-
-    @staticmethod
-    def get_results(
-        search_term: str, *_args, **_kwargs
-    ) -> Optional[List[PyTube]]:  # pylint: disable=W0221
-        """
-        Get results from YouTube
-
-        ### Arguments
-        - search_term: The search term to search for.
-        - args: Unused.
-        - kwargs: Unused.
-
-        ### Returns
-        - A list of YouTube results if found, None otherwise.
-        """
-
-        return Search(search_term).results
-
-    def order_results(self, results: List[PyTube], song: Song) -> Dict[str, Any]:
-        """
-        Filter results based on the song's metadata.
-
-        ### Arguments
-        - results: The results to order.
-        - song: The song to order for.
-
-        ### Returns
-        - The ordered results.
-        """
-
-        # Assign an overall avg match value to each result
-        links_with_match_value = {}
-
-        # Slugify song title
-        slug_song_name = slugify(song.name)
-        slug_song_title = slugify(
-            create_song_title(song.name, song.artists)
-            if not self.search_query
-            else create_search_query(song, self.search_query, False, None, True)
-        )
-
+        
+        isrc_result = isrc_results[0]
+        return isrc_result.watch_url if isrc_result is not None else None
+        
+                
+    def _get_best_result(self, results: List[PyTube], song: Song, search: str, filter_results: bool) -> str:
+        if not filter_results:
+            return results[0].watch_url
+        
+        slug_song_title = slugify(search)
+        
+        results_score_dict: Dict[PyTube, Tuple[float, int]] = {}
         for result in results:
-            # Skip results without id
-            if result.video_id is None:
-                continue
-
-            # Slugify some variables
-            slug_result_name = slugify(result.title)
-            sentence_words = slug_song_name.replace("-", " ").split(" ")
-
-            # Check for common words in result name
-            common_word = any(
-                word != "" and word in slug_result_name for word in sentence_words
+            video_id_score = self._get_video_id_score(result)
+            words_in_common_score = self._get_words_in_common_score(result, song)
+            artist_match_score = self._get_artist_match_score(result, song)
+            name_match_score = self._get_name_match_score(result, song, search)
+            time_match_score = self._get_time_match_score(result, song)
+            
+            if (
+                video_id_score < 1 or
+                words_in_common_score < 1 or
+                artist_match_score < 70 or
+                name_match_score < 50 or
+                time_match_score < 50
+            ):
+                results_score_dict[result.watch_url] = 0
+                
+            results_score_dict[result.watch_url] = (
+                (artist_match_score + name_match_score + time_match_score) / 3,
+                result.views
             )
-
-            # skip results that have no common words in their name
-            if not common_word:
-                continue
-
-            # Find artist match
-            artist_match_number = 0.0
-
-            # Calculate artist match for each artist
-            # in the song's artist list
-            for artist in song.artists:
-                artist_match_number += fuzz.partial_token_sort_ratio(
-                    slugify(artist), slug_result_name
-                )
-
-            # skip results with artist match lower than 70%
-            artist_match = artist_match_number / len(song.artists)
-            if artist_match < 70:
-                continue
-
-            # Calculate name match
-            name_match = fuzz.partial_token_sort_ratio(
-                slug_result_name, slug_song_title
+            
+        return sorted(list(results_score_dict.items()), key=lambda el: el[1], reverse=True)[0][0]
+    
+          
+    def _get_video_id_score(self, result: PyTube) -> float:
+        return 0.0 if result.video_id is None else 1.0
+    
+    
+    def _get_words_in_common_score(self, result: PyTube, song: Song) -> float:
+        slug_result_name = slugify(result.title)
+        slug_song_name = slugify(song.name, separator=" ").split(" ")
+        return 1.0 if any(
+            word != "" and word in slug_result_name for word in slug_song_name
+        ) else 0.0
+        
+        
+    def _get_artist_match_score(self, result: PyTube, song: Song) -> float:
+        slug_result_name = slugify(result.title)
+        artist_match_number = 0.0
+        
+        for artist in song.artists:
+            artist_match_number += fuzz.partial_token_sort_ratio(
+                slugify(artist), slug_result_name
             )
+        
+        return artist_match_number / len(song.artists)
+    
+    
+    def _get_name_match_score(self, result: PyTube, song: Song, search: str) -> float:
+        slug_result_name = slugify(result.title)
+        slug_song_title = slugify(search)
 
-            # Drop results with name match lower than 50%
-            if name_match < 50:
-                continue
+        return fuzz.partial_token_sort_ratio(
+            slug_result_name, slug_song_title
+        )
+        
+        
+    def _get_time_match_score(self, result: PyTube, song: Song) -> float:
+        return 100 - abs(result.length - song.duration) / song.duration * 100
+            
+    
+    def _get_download_metadata(self, url: str, download: bool = False) -> Dict:
+        """
+        Get metadata for a download using yt-dlp.
 
-            # Calculate time match
-            time_match = (
-                100 - (result.length - song.duration**2) / song.duration * 100
-            )
+        ### Arguments
+        - url: The url to get metadata for.
 
-            average_match = (artist_match + name_match + time_match) / 3
+        ### Returns
+        - A dictionary containing the metadata.
+        """
 
-            # the results along with the avg Match
-            links_with_match_value[result.watch_url] = average_match
+        try:
+            data = self._youtube_dl_client.extract_info(url, download=download)
 
-        return links_with_match_value
+            if data:
+                return data
+        except Exception as exception:
+            raise MusicDLException(f"YT-DLP download error - {url}") from exception
+
+        raise MusicDLException(f"No metadata found for the provided url {url}")
+
+

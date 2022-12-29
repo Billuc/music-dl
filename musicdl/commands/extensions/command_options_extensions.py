@@ -26,7 +26,8 @@ def build_download_settings(commandOpts: CommandOptions) -> DownloaderSettings:
         commandOpts.cache_path,
         commandOpts.user_auth,
         commandOpts.no_cache,
-        commandOpts.headless
+        commandOpts.headless,
+        commandOpts.cookie_file
     )
 
     return settings

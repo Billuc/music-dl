@@ -1,5 +1,4 @@
 from kink import di
-from spotipy import Spotify
 
 from musicdl.common import SongList
 from musicdl.common.classes import PipelineFactory
