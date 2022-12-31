@@ -31,6 +31,9 @@ class YoutubeAudioProvider(BasePipelineMiddleware[DownloadSongCommand, Dict]):
         
         
     def exec(self, query: DownloadSongCommand, next: Callable[[DownloadSongCommand], Dict]) -> Dict:
+        if "youtube" not in query.audio_providers:
+            return next(query)
+        
         download_url = self._get_download_url(query.song, query.search_query, query.filter_results)
         
         if download_url is None:
@@ -74,8 +77,6 @@ class YoutubeAudioProvider(BasePipelineMiddleware[DownloadSongCommand, Dict]):
         if not filter_results:
             return results[0].watch_url
         
-        slug_song_title = slugify(search)
-        
         results_score_dict: Dict[PyTube, Tuple[float, int]] = {}
         for result in results:
             video_id_score = self._get_video_id_score(result)
@@ -84,21 +85,20 @@ class YoutubeAudioProvider(BasePipelineMiddleware[DownloadSongCommand, Dict]):
             name_match_score = self._get_name_match_score(result, song, search)
             time_match_score = self._get_time_match_score(result, song)
             
-            if (
+            score = 0
+            if not (
                 video_id_score < 1 or
                 words_in_common_score < 1 or
                 artist_match_score < 70 or
                 name_match_score < 50 or
                 time_match_score < 50
             ):
-                results_score_dict[result.watch_url] = 0
+                score = (artist_match_score + name_match_score + time_match_score) / 3
                 
-            results_score_dict[result.watch_url] = (
-                (artist_match_score + name_match_score + time_match_score) / 3,
-                result.views
-            )
+            results_score_dict[result.watch_url] = (score, result.views)
             
-        return sorted(list(results_score_dict.items()), key=lambda el: el[1], reverse=True)[0][0]
+        ordered_results = sorted(list(results_score_dict.items()), key=lambda el: el[1], reverse=True)
+        return ordered_results[0][0] if ordered_results[0][1][0] > 0 else None
     
           
     def _get_video_id_score(self, result: PyTube) -> float:

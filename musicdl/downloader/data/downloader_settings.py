@@ -37,3 +37,5 @@ class DownloaderSettings:
     headless: bool
     
     cookie_file: str
+    audio_providers: List[str]
+    lyrics_providers: List[str]
