@@ -23,3 +23,5 @@ FORMAT_VARIABLES: List[str] = [
     "{list-name}",
     "{output-ext}",
 ]
+
+DEFAULT_TEMPLATE = "/{artist} - {title}.{output-ext}"

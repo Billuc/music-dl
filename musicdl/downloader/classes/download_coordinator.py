@@ -18,7 +18,7 @@ from musicdl.downloader.interfaces import (
 )
 from musicdl.providers.audio import BaseAudioProvider, DownloadSongCommand
 from musicdl.providers.metadata import BaseMetadataProvider
-from musicdl.common import MusicDLException, BaseSpotifyClientProvider, BaseYoutubeDLClientProvider, TEMP_PATH, Song
+from musicdl.common import MusicDLException, BaseSpotifyClientProvider, BaseYoutubeDLClientProvider, TEMP_PATH, Song, BaseFormatHelper
 
 
 
@@ -34,6 +34,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
 
     _spotify_client_provider: BaseSpotifyClientProvider
     _youtube_dl_client_provider: BaseYoutubeDLClientProvider
+    _format_helper: BaseFormatHelper
     
     _metadata_provider: BaseMetadataProvider
     _audio_provider: BaseAudioProvider
@@ -49,6 +50,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         self,
         spotify_client_provider: BaseSpotifyClientProvider,
         youtube_dl_client_provider: BaseYoutubeDLClientProvider,
+        format_helper: BaseFormatHelper,
         metadata_provider: BaseMetadataProvider,
         audio_provider: BaseAudioProvider,
         lyrics_provider: BaseLyricsProvider,
@@ -59,6 +61,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         self._initialized = False
         self._spotify_client_provider = spotify_client_provider
         self._youtube_dl_client_provider = youtube_dl_client_provider
+        self._format_helper = format_helper
         self._metadata_provider = metadata_provider
         self._audio_provider = audio_provider
         self._lyrics_provider = lyrics_provider
@@ -116,8 +119,9 @@ class DownloadCoordinator(BaseDownloadCoordinator):
 
 
     def _download(self, song: Song) -> Tuple[Song, Optional[Path]]:
-        # TODO : check if output exists
-        output_file = Path("")
+        output_file = self._format_helper.create_file_name(
+            song, self._settings.output, self._settings.format, self._settings.restrict
+        )
         
         if not self._should_skip(song, output_file):
             self._prepare(song, output_file)

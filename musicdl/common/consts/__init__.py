@@ -10,7 +10,7 @@ from .logging import (
     CONSOLE_FORMATTER
 )
 from .ffmpeg import FFMPEG_FORMATS, FFMPEG_URLS
-from .formatter import FORMAT_VARIABLES
+from .format import FORMAT_VARIABLES, DEFAULT_TEMPLATE
 from .config import (
     MUSICDL_PATH,
     CACHE_PATH,
