@@ -74,13 +74,13 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         self._update_settings(options)
         results = self._search_and_download(options.query)
         
-        if self.print_errors:
-            for error in self.errors:
-                self.progress_handler.error(error)
+        # if self.print_errors:
+        #     for error in self.errors:
+        #         self.progress_handler.error(error)
 
-        if self.save_file:
-            with open(self.save_file, "w", encoding="utf-8") as save_file:
-                json.dump([song.json for song, _ in results], save_file, indent=4)
+        # if self.save_file:
+        #     with open(self.save_file, "w", encoding="utf-8") as save_file:
+        #         json.dump([song.json for song, _ in results], save_file, indent=4)
 
         return results
 
@@ -109,11 +109,11 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         results = list()
 
         for query_item in query:
-            songs = self._metadata_provider.search(query_item)
-            self._progress_logger.set_count(len(songs))
+            songs = self._metadata_provider.exec(query_item, None)
+            # self._progress_logger.set_count(len(songs))
             
             partial_results = list(self._parallel_executor.execute_function(self._download, songs, return_exceptions=True))
-            results.concat(partial_results)
+            results.extend(partial_results)
 
         return results
 
@@ -132,7 +132,8 @@ class DownloadCoordinator(BaseDownloadCoordinator):
                     self._settings.search_query, 
                     self._settings.filter_results,
                     self._settings.audio_providers
-                )
+                ),
+                None
             )
             
             temp_file = Path(TEMP_PATH / f"{download_info['id']}.{download_info['ext']}")

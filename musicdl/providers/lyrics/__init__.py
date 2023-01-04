@@ -1,7 +1,5 @@
 """
-Lyrics providers for spotdl.
+Lyrics providers for musicdl.
 """
 
-from spotdl.providers.lyrics.genius import Genius
-from spotdl.providers.lyrics.musixmatch import MusixMatch
-from spotdl.providers.lyrics.azlyrics import AzLyrics
+from .interfaces import BaseLyricsProvider

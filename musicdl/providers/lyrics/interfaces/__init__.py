@@ -1,0 +1,1 @@
+from .base_lyrics_provider import BaseLyricsProvider

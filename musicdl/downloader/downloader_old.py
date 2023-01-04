@@ -22,7 +22,7 @@ from musicdl.utils.metadata import embed_metadata, MetadataError
 from musicdl.utils.formatter import create_file_name, restrict_filename
 from musicdl.providers.audio.base import AudioProvider
 from musicdl.providers.lyrics import Genius, MusixMatch, AzLyrics
-from musicdl.providers.lyrics.base import LyricsProvider
+from musicdl.providers.lyrics.interfaces.base import LyricsProvider
 from musicdl.providers.audio import YouTube, YouTubeMusic
 from musicdl.downloader.progress_handler_old import NAME_TO_LEVEL, ProgressHandler
 from musicdl.utils.config import get_errors_path, get_temp_path

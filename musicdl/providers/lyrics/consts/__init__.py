@@ -1,0 +1,1 @@
+from .headers import LYRICS_HEADERS

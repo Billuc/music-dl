@@ -1,4 +1,3 @@
-from .base_lyrics_provider import BaseLyricsProvider
 from .base_progress_logger import BaseProgressLogger
 from .base_download_coordinator import BaseDownloadCoordinator
 from .base_parallel_executor import BaseParallelExecutor
