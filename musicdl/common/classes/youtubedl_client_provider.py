@@ -5,7 +5,7 @@ from kink import inject
 
 from musicdl.common.consts import TEMP_PATH
 from musicdl.common.exceptions import MusicDLException
-from musicdl.providers.audio.interfaces import BaseYoutubeDLClientProvider
+from musicdl.common.interfaces import BaseYoutubeDLClientProvider
 
 
 @inject

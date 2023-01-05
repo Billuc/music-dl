@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Dict, Any, List, Optional
 
-from .song_list import SongList
+# from .song_list import SongList
 
 
 @dataclass()
@@ -33,7 +33,7 @@ class Song:
     isrc: Optional[str]
     copyright_text: Optional[str]
     download_url: Optional[str] = None
-    song_list: Optional["SongList"] = None
+    # song_list: Optional["SongList"] = None
     lyrics: Optional[str] = None
 
     @classmethod

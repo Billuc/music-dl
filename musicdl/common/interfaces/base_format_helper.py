@@ -2,7 +2,7 @@ import abc
 from pathlib import Path
 from typing import List, Optional
 
-from musicdl.common.classes import Song
+from musicdl.common.data import Song
 
 
 class BaseFormatHelper(metaclass=abc.ABCMeta):

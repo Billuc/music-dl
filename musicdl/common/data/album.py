@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List
 
 from .song_list import SongList
-from .song import Song
-from spotdl.utils.spotify import SpotifyClient
+# from .song import Song
 
 
 @dataclass(frozen=True)
@@ -14,95 +13,70 @@ class Album(SongList):
 
     artist: Dict[str, Any]
 
-    @classmethod
-    def from_url(cls, url: str) -> "Album":
-        """
-        Parse an album from a Spotify URL.
 
-        ### Arguments
-        - url: The URL of the album.
+    # @staticmethod
+    # def get_urls(url: str) -> List[str]:
+    #     """
+    #     Get urls for all songs in album.
 
-        ### Returns
-        - The Album object.
-        """
+    #     ### Arguments
+    #     - url: The URL of the album.
 
-        metadata = Album.get_metadata(url)
+    #     ### Returns
+    #     - A list of urls.
+    #     """
 
-        urls = cls.get_urls(url)
+    #     spotify_client = SpotifyClient()
 
-        # Remove songs without id (country restricted/local tracks)
-        # And create song object for each track
-        songs: List[Song] = [Song.from_url(url) for url in urls]
+    #     album_response = spotify_client.album_tracks(url)
+    #     if album_response is None:
+    #         raise AlbumError(
+    #             "Couldn't get metadata, check if you have passed correct album id"
+    #         )
 
-        return cls(
-            **metadata,
-            songs=songs,
-            urls=urls,
-        )
+    #     tracks = album_response["items"]
 
-    @staticmethod
-    def get_urls(url: str) -> List[str]:
-        """
-        Get urls for all songs in album.
+    #     # Get all tracks from album
+    #     while album_response["next"]:
+    #         album_response = spotify_client.next(album_response)
 
-        ### Arguments
-        - url: The URL of the album.
+    #         # Failed to get response, break the loop
+    #         if album_response is None:
+    #             break
 
-        ### Returns
-        - A list of urls.
-        """
+    #         tracks.extend(album_response["items"])
 
-        spotify_client = SpotifyClient()
+    #     if album_response is None:
+    #         raise AlbumError(f"Failed to get album response: {url}")
 
-        album_response = spotify_client.album_tracks(url)
-        if album_response is None:
-            raise AlbumError(
-                "Couldn't get metadata, check if you have passed correct album id"
-            )
+    #     return [
+    #         track["external_urls"]["spotify"]
+    #         for track in tracks
+    #         if track and track.get("id")
+    #     ]
 
-        tracks = album_response["items"]
+    # @staticmethod
+    # def get_metadata(url: str) -> Dict[str, Any]:
+    #     """
+    #     Get metadata for album.
 
-        # Get all tracks from album
-        while album_response["next"]:
-            album_response = spotify_client.next(album_response)
+    #     ### Arguments
+    #     - url: The URL of the album.
 
-            # Failed to get response, break the loop
-            if album_response is None:
-                break
+    #     ### Returns
+    #     - A dictionary with metadata.
+    #     """
 
-            tracks.extend(album_response["items"])
+    #     spotify_client = SpotifyClient()
 
-        if album_response is None:
-            raise AlbumError(f"Failed to get album response: {url}")
+    #     album_metadata = spotify_client.album(url)
+    #     if album_metadata is None:
+    #         raise AlbumError(
+    #             "Couldn't get metadata, check if you have passed correct album id"
+    #         )
 
-        return [
-            track["external_urls"]["spotify"]
-            for track in tracks
-            if track and track.get("id")
-        ]
-
-    @staticmethod
-    def get_metadata(url: str) -> Dict[str, Any]:
-        """
-        Get metadata for album.
-
-        ### Arguments
-        - url: The URL of the album.
-
-        ### Returns
-        - A dictionary with metadata.
-        """
-
-        spotify_client = SpotifyClient()
-
-        album_metadata = spotify_client.album(url)
-        if album_metadata is None:
-            raise AlbumError(
-                "Couldn't get metadata, check if you have passed correct album id"
-            )
-
-        return {
-            "name": album_metadata["name"],
-            "artist": album_metadata["artists"][0],
-            "url": url,
-        }
+    #     return {
+    #         "name": album_metadata["name"],
+    #         "artist": album_metadata["artists"][0],
+    #         "url": url,
+    #     }

@@ -47,5 +47,5 @@ class PipelineFactory(Generic[T, U]):
         return self
 
 
-    def build(self) -> BasePipeline[T]:
+    def build(self) -> BasePipeline[T, U]:
         return self._pipeline
