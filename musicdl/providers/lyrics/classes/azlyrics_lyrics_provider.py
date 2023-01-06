@@ -37,16 +37,8 @@ class AZLyricsLyricsProvider(BasePipelineMiddleware[DownloadLyricsCommand, str])
         options: DownloadLyricsCommand,
         next: Callable[[DownloadLyricsCommand], str],
     ) -> str:
-        """
-        Try to get lyrics from azlyrics
-
-        ### Arguments
-        - name: The name of the song.
-        - artists: The artists of the song.
-
-        ### Returns
-        - The lyrics of the song or None if no lyrics were found.
-        """
+        if not "azlyrics" in options.lyrics_providers:
+            return next(options)
 
         search_results = self._get_search_results(options.song)
         links = self._get_links_in_html(search_results)

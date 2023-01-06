@@ -3,9 +3,9 @@ from musicdl.common import Song
 from musicdl.providers.lyrics.data import DownloadLyricsCommand
 
 song = Song(
-    "Arrow of Love",
-    ["Electric Callboy"],
-    "Electric Callboy",
+    "Save Yourself",
+    ["ONE OK ROCK"],
+    "ONE OK ROCK",
     None,
     None,
     None,
