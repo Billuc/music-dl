@@ -5,9 +5,13 @@
 - Ajouter AmazonMusic aux metadata providers
 - ProgressLogger
 
+- Verifier s'il y a des mises à jour a faire par rapport a spotdl
+
 
 
 - Better exceptions
+- Maybe utiliser Injector comme librairie de DI
+- Maybe modifier le download coordinator pour enlever les dependences vers les providers
 
 
 - maybe enlever les default dans le parser

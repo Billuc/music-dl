@@ -3,9 +3,7 @@ from typing import Callable, Dict, Any
 from spotipy import Spotify
 from kink import inject
 
-from musicdl.common import BasePipelineMiddleware, MusicDLException
-from musicdl.common.classes import SpotifyClientProvider
-from musicdl.common.data import SongList, Song
+from musicdl.common import BasePipelineMiddleware, BaseSpotifyClientProvider, SongList
 from musicdl.providers.metadata.utils import create_song
 
 
@@ -15,7 +13,7 @@ class SpotifyTrackMetadataProvider(BasePipelineMiddleware[str, SongList]):
     
     def __init__(
         self,
-        spotify_client_provider: SpotifyClientProvider
+        spotify_client_provider: BaseSpotifyClientProvider
     ):
         self._spotifyClient = spotify_client_provider.get_client()
         
