@@ -5,8 +5,6 @@ from urllib.request import urlopen
 from musicdl.common import BaseResponsibilityChainLink, Song
 from musicdl.downloader.data import EmbedMetadataCommand
 
-# Apple has specific tags - see mutagen docs -
-# http://mutagen.readthedocs.io/en/latest/api/mp4.html
 FLAC_TAG_PRESET = {
     "album": "album",
     "artist": "artist",
@@ -80,7 +78,7 @@ class FLACMetadataEmbedder(BaseResponsibilityChainLink[EmbedMetadataCommand]):
 
     def _embed_cover(self, audio_file: FLAC, song: Song) -> None:
         if song.cover_url is None:
-            return audio_file
+            return
 
         image = Picture()
         image.type = 3

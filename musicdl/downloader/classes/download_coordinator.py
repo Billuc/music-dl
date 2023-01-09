@@ -7,12 +7,13 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 from kink import inject
 
-from musicdl.downloader.data import DownloaderSettings
+from musicdl.downloader.data import DownloaderSettings, EmbedMetadataCommand
 from musicdl.downloader.interfaces import (
     BaseProgressLogger,
     BaseDownloadCoordinator,
     BaseAudioConverter,
     BaseParallelExecutor,
+    BaseMetadataEmbedder
 )
 from musicdl.providers.audio import BaseAudioProvider, DownloadSongCommand
 from musicdl.providers.lyrics import BaseLyricsProvider, DownloadLyricsCommand
@@ -44,6 +45,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
     _audio_provider: BaseAudioProvider
     _lyrics_provider: BaseLyricsProvider
     _audio_converter: BaseAudioConverter
+    _metadata_embedder: BaseMetadataEmbedder
 
     _progress_logger: BaseProgressLogger
     _parallel_executor: BaseParallelExecutor
@@ -59,6 +61,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         progress_logger: BaseProgressLogger,
         parallel_executor: BaseParallelExecutor,
         audio_converter: BaseAudioConverter,
+        metadata_embedder: BaseMetadataEmbedder
     ):
         self._initialized = False
         self._spotify_client_provider = spotify_client_provider
@@ -70,6 +73,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         self._progress_logger = progress_logger
         self._parallel_executor = parallel_executor
         self._audio_converter = audio_converter
+        self._metadata_embedder = metadata_embedder
 
     def download(
         self, options: DownloaderSettings
@@ -158,7 +162,9 @@ class DownloadCoordinator(BaseDownloadCoordinator):
             )
             song.download_url = download_info["webpage_url"]
             
-            # embed metadata
+            self._metadata_embedder.exec(
+                EmbedMetadataCommand(song, output_file, self._settings.format)
+            )
 
             self._clean(temp_file)
 
