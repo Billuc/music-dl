@@ -14,24 +14,24 @@ class Song:
 
     name: str
     artists: List[str]
-    artist: str
-    album_name: str
-    album_artist: str
-    genres: List[str]
-    disc_number: int
-    disc_count: int
-    duration: int
-    year: int
-    date: str
-    track_number: int
-    tracks_count: int
-    song_id: str
-    cover_url: Optional[str]
-    explicit: bool
-    publisher: str
-    url: str
-    isrc: Optional[str]
-    copyright_text: Optional[str]
+    artist: str = None
+    album_name: str = None
+    album_artist: str = None
+    genres: List[str] = None
+    disc_number: int = None
+    disc_count: int = None
+    duration: int = None
+    year: int = None
+    date: str = None
+    track_number: int = None
+    tracks_count: int = None
+    song_id: str = None
+    cover_url: Optional[str] = None
+    explicit: bool = None
+    publisher: str = None
+    url: str = None
+    isrc: Optional[str] = None
+    copyright_text: Optional[str] = None
     download_url: Optional[str] = None
     # song_list: Optional["SongList"] = None
     lyrics: Optional[str] = None

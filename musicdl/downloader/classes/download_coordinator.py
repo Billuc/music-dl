@@ -5,26 +5,27 @@ Downloader module, this is where all the downloading pre/post processing happens
 
 from pathlib import Path
 from typing import List, Optional, Tuple
+
 from kink import inject
 
+from musicdl.common import (
+    TEMP_PATH,
+    BaseFormatHelper,
+    BaseSpotifyClientProvider,
+    BaseYoutubeDLClientProvider,
+    Song,
+)
 from musicdl.downloader.data import DownloaderSettings, EmbedMetadataCommand
 from musicdl.downloader.interfaces import (
-    BaseProgressLogger,
-    BaseDownloadCoordinator,
     BaseAudioConverter,
+    BaseDownloadCoordinator,
+    BaseMetadataEmbedder,
     BaseParallelExecutor,
-    BaseMetadataEmbedder
+    BaseProgressLogger,
 )
 from musicdl.providers.audio import BaseAudioProvider, DownloadSongCommand
 from musicdl.providers.lyrics import BaseLyricsProvider, DownloadLyricsCommand
 from musicdl.providers.metadata import BaseMetadataProvider
-from musicdl.common import (
-    BaseSpotifyClientProvider,
-    BaseYoutubeDLClientProvider,
-    TEMP_PATH,
-    Song,
-    BaseFormatHelper,
-)
 
 
 @inject
@@ -61,7 +62,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
         progress_logger: BaseProgressLogger,
         parallel_executor: BaseParallelExecutor,
         audio_converter: BaseAudioConverter,
-        metadata_embedder: BaseMetadataEmbedder
+        metadata_embedder: BaseMetadataEmbedder,
     ):
         self._initialized = False
         self._spotify_client_provider = spotify_client_provider
@@ -91,6 +92,7 @@ class DownloadCoordinator(BaseDownloadCoordinator):
 
         return results
 
+    # TODO : try to get rid of this method
     def _update_settings(self, settings: DownloaderSettings) -> None:
         self._settings = settings
         self._spotify_client_provider.init(
@@ -152,16 +154,12 @@ class DownloadCoordinator(BaseDownloadCoordinator):
             self._audio_converter.convert(temp_file, output_file)
 
             # sponsor block
-            
+
             song.lyrics = self._lyrics_provider.exec(
-                DownloadLyricsCommand(
-                    song,
-                    self._settings.lyrics_providers
-                ),
-                None
+                DownloadLyricsCommand(song, self._settings.lyrics_providers), None
             )
             song.download_url = download_info["webpage_url"]
-            
+
             self._metadata_embedder.exec(
                 EmbedMetadataCommand(song, output_file, self._settings.format)
             )
