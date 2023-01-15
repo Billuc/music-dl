@@ -1,5 +1,6 @@
 import cProfile
 import pstats
+from kink import di
 
 from musicdl.common.exceptions.MusicDLException import MusicDLException
 
@@ -8,15 +9,15 @@ from .classes import QueryParser, QueryExecuter
 from .data import QueryOptions
 
 
-parser = QueryParser()
-executer = QueryExecuter()
-
 def entry_point():
     """
     Console entry point for musicdl. This is where the magic happens.
     """
 
     init_app()
+    
+    parser: QueryParser = di[QueryParser]
+    executer: QueryExecuter = di[QueryExecuter]
 
     try:
         options = parser.parse_arguments()
@@ -25,12 +26,12 @@ def entry_point():
         return None
 
     if options.profile:
-        _execute_with_profile(options)
+        _execute_with_profile(executer, options)
     else:
         executer.exec(options)
 
 
-def _execute_with_profile(options: QueryOptions) -> None:
+def _execute_with_profile(executer: QueryExecuter, options: QueryOptions) -> None:
     with cProfile.Profile() as profile:
         executer.exec(options)
 

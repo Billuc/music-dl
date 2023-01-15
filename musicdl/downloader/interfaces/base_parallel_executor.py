@@ -1,7 +1,5 @@
-
-
 import abc
-from typing import Any, Coroutine, List, Callable, Tuple
+from typing import Any, Callable, Coroutine, List, Tuple
 
 
 class BaseParallelExecutor(metaclass=abc.ABCMeta):

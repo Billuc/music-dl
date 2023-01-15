@@ -2,8 +2,8 @@ import abc
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from musicdl.downloader.data.song import Song
-from musicdl.downloader.data.downloader_settings import DownloaderSettings
+from musicdl.common import Song
+from musicdl.downloader.data import DownloaderSettings
 
 
 class BaseDownloadCoordinator(metaclass=abc.ABCMeta):

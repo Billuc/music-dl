@@ -1,7 +1,7 @@
 from logging import Logger
 
 from kink import inject
-from musicdl.downloader.classes import DownloaderSettings
+from musicdl.downloader.data import DownloaderSettings
 from musicdl.downloader.interfaces import BaseProgressLogger
 
 

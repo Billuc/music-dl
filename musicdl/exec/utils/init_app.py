@@ -36,14 +36,14 @@ def _check_folders():
 
 def _init_default_logger():
     default_logger: logging.Logger = di[logging.Logger]
-    default_logger.setLevel(DEFAULT_LOGGING_LEVEL)
+    default_logger.setLevel(DEFAULT_LOGGING_LEVEL.value)
 
     file_handler = logging.FileHandler(LOG_PATH, mode="w", encoding="utf8")
-    file_handler.setLevel(LoggingLevel.DEBUG)
+    file_handler.setLevel(LoggingLevel.DEBUG.value)
     file_handler.setFormatter(DEFAULT_FORMATTER)
 
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(LoggingLevel.INFO)
+    console_handler.setLevel(LoggingLevel.INFO.value)
     console_handler.setFormatter(CONSOLE_FORMATTER)
 
     default_logger.addHandler(file_handler)
@@ -51,10 +51,10 @@ def _init_default_logger():
 
 
 def _set_loggers():
-    logging.getLogger("requests").setLevel(DEFAULT_LOGGING_LEVEL)
-    logging.getLogger("urllib3").setLevel(DEFAULT_LOGGING_LEVEL)
-    logging.getLogger("spotipy").setLevel(DEFAULT_LOGGING_LEVEL)
-    logging.getLogger("asyncio").setLevel(DEFAULT_LOGGING_LEVEL)
+    logging.getLogger("requests").setLevel(DEFAULT_LOGGING_LEVEL.value)
+    logging.getLogger("urllib3").setLevel(DEFAULT_LOGGING_LEVEL.value)
+    logging.getLogger("spotipy").setLevel(DEFAULT_LOGGING_LEVEL.value)
+    logging.getLogger("asyncio").setLevel(DEFAULT_LOGGING_LEVEL.value)
 
 
 def _init_rich():

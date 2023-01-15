@@ -1,4 +1,6 @@
 from spotipy import Spotify
+from typing import Dict, Any
+
 from musicdl.common import MusicDLException, Song
 
 def create_song(spotify_client: Spotify, url: str) -> Song:
@@ -9,11 +11,11 @@ def create_song(spotify_client: Spotify, url: str) -> Song:
     
     # get artist info
     primary_artist_id = raw_track_metadata["artists"][0]["id"]
-    raw_artist_metadata: Dict[str, Any] = self._spotifyClient.artist(primary_artist_id)  # type: ignore
+    raw_artist_metadata: Dict[str, Any] = spotify_client.artist(primary_artist_id)  # type: ignore
 
     # get album info
     album_id = raw_track_metadata["album"]["id"]
-    raw_album_metadata: Dict[str, Any] = self._spotifyClient.album(album_id)  # type: ignore
+    raw_album_metadata: Dict[str, Any] = spotify_client.album(album_id)  # type: ignore
     
     # create song object
     return Song(

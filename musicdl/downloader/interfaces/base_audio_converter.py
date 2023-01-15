@@ -1,7 +1,7 @@
 import abc
 from pathlib import Path
 
-from musicdl.downloader.classes import DownloaderSettings
+from musicdl.downloader.data import DownloaderSettings
 
 
 class BaseAudioConverter(metaclass=abc.ABCMeta):

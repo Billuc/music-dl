@@ -3,7 +3,7 @@ Init module for spotdl. This module contains the main entry point for spotdl.
 And Spotdl class
 """
 
-# from musicdl.exec import console_entry_point
+from musicdl.exec import console_entry_point
 
 # import asyncio
 # import concurrent.futures

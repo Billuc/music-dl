@@ -1,6 +1,6 @@
 import abc
 
-from musicdl.downloader.classes import DownloaderSettings
+from musicdl.downloader.data import DownloaderSettings
 
 
 class BaseProgressLogger(metaclass=abc.ABCMeta):
